@@ -56,6 +56,7 @@ class Partitions:
         listings = limits.merge(self.__data, how='left', on='date')
         logging.info(listings)
 
+        # The unique pairings of catchment identification code & series identification code
         partitions = listings[['catchment_id', 'ts_id']].drop_duplicates()
         logging.info(partitions)
 
