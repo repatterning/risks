@@ -47,8 +47,7 @@ class Interface:
         """
 
         # Delayed tasks
-        __data = dask.delayed(src.algorithms.data.Data(
-            service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc)
+        __data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         __persist = dask.delayed(src.algorithms.persist.Persist(
             reference=reference, frequency=self.__arguments.get('frequency')).exc)
 
