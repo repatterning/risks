@@ -47,7 +47,9 @@ class Metrics:
 
         return weights.to_numpy()
 
-    def __get_metrics(self, states: pd.DataFrame):
+    def __get_metrics(self, blob: pd.DataFrame, cut: int):
+
+        states = blob.copy()[:cut]
 
         maximum = states[self.__points].max(axis=0).values
         minimum = states[self.__points].min(axis=0).values
@@ -64,11 +66,13 @@ class Metrics:
         frame = data.copy()
         frame.sort_values(by='timestamp', ascending=True, inplace=True)
 
-        states = pd.DataFrame(
+        blob = pd.DataFrame(
             data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
-        states = states.assign(timestamp=frame['timestamp'])
+        blob = blob.assign(timestamp=frame['timestamp'])
 
-        metrics = self.__get_metrics(states=states)
+        metrics_ = [self.__get_metrics(blob=blob, cut=i) for i in self.__back]
+        metrics = pd.concat(metrics_)
+
         metrics['catchment_id'] = partition.catchment_id
         metrics['ts_id'] = partition.ts_id
 
