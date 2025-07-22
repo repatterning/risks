@@ -60,10 +60,11 @@ class Persist:
 
         return {'data': _data}
 
-    def exc(self, data: pd.DataFrame, partition: pr.Partitions) -> str:
+    def exc(self, data: pd.DataFrame, metrics: pd.DataFrame, partition: pr.Partitions) -> str:
         """
 
         :param data:
+        :param metrics:
         :param partition:
         :return:
         """
