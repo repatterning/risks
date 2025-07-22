@@ -1,6 +1,8 @@
-
+import logging
 import numpy as np
 import pandas as pd
+
+import src.elements.partitions as pr
 
 
 class Metrics:
@@ -13,24 +15,48 @@ class Metrics:
         frequency: float = self.__arguments.get('frequency')
         self.__points: np.ndarray = (self.__tau / frequency).astype(int)
 
-    def __rates(self, frame: pd.DataFrame) -> pd.DataFrame:
+    def __rates(self, frame: pd.DataFrame):
 
         # differences
-        differences_ = [frame['measure'].diff(i).to_frame(name=i) for i in self.__points]
+        differences_ = [frame.copy()['measure'].diff(i).to_frame(name=i) for i in self.__points]
         differences = pd.concat(differences_, axis=1, ignore_index=False)
 
         # delta measure / delta time
-        rates = pd.DataFrame(data=np.true_divide(differences.to_numpy(), self.__tau), columns=self.__points)
+        # rates = pd.DataFrame(data=np.true_divide(differences.to_numpy(), self.__tau), columns=self.__points)
+        rates = np.true_divide(differences.to_numpy(), self.__tau)
 
         return rates
 
-    def __fractional_delta(self, frame: pd.DataFrame) -> pd.DataFrame:
+    def __weights(self, frame: pd.DataFrame):
 
         # delta measure / original measure
-        fractions_ = [frame['measure'].pct_change(i).to_frame(name=i) for i in self.__points]
-        fractions = pd.concat(fractions_, axis=1, ignore_index=False)
+        weights_ = [frame.copy()['measure'].pct_change(i).to_frame(name=i) for i in self.__points]
+        weights = pd.concat(weights_, axis=1, ignore_index=False)
 
-        return fractions
+        return weights.to_numpy()
 
-    def exc(self, frame: pd.DataFrame):
-        pass
+    def __get_metrics(self, states: pd.DataFrame):
+
+        maximum = states[self.__points].max(axis=0).values
+        minimum = states[self.__points].min(axis=0).values
+        latest = states[self.__points][-1:].squeeze().values
+        median = states[self.__points].median(axis=0).values
+
+        metrics = pd.DataFrame(data={'maximum': maximum, 'minimum': minimum, 'latest': latest, 'median': median})
+        metrics = metrics.assign(points=self.__points)
+
+        return metrics
+
+    def exc(self, data: pd.DataFrame, partition: pr.Partitions):
+
+        frame = data.copy()
+        frame.sort_values(by='timestamp', ascending=True, inplace=True)
+
+        states = pd.DataFrame(data=self.__rates(frame=frame) * self.__weights(frame=frame),
+                              columns=self.__points)
+        states = states.assign(timestamp=frame['timestamp'])
+
+        metrics = self.__get_metrics(states=states)
+        metrics['catchment_id'] = partition.catchment_id
+        metrics['ts_id'] = partition.ts_id
+        logging.info(metrics)
