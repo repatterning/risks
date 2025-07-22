@@ -1,7 +1,10 @@
 """Module data.py"""
+import logging
 import dask.dataframe as ddf
 import numpy as np
 import pandas as pd
+import datetime
+import time
 
 import src.elements.partitions as pr
 import src.elements.s3_parameters as s3p
@@ -24,8 +27,9 @@ class Data:
         """
 
         self.__service = service
+        self.__arguments = arguments
         __s3_parameters: dict = s3_parameters._asdict()
-        __s3_arguments: dict = arguments['s3']
+        __s3_arguments: dict = self.__arguments['s3']
 
         # ...
         self.__intermediary = __s3_parameters[__s3_arguments.get('p_prefix')] + __s3_arguments.get('affix') + '/'
@@ -56,22 +60,29 @@ class Data:
 
         return block
 
-    def exc(self, partition: pr.Partitions) -> pd.DataFrame:
+    def exc(self, keys: list[str]) -> pd.DataFrame:
         """
 
-        :param partition: Refer to src.elements.partitions
+        :param keys:
         :return:
         """
 
         # In focus
-        prefix = self.__intermediary + str(partition.catchment_id) + '/' + str(partition.ts_id)
+        # prefix = self.__intermediary + str(partition.catchment_id) + '/' + str(partition.ts_id)
 
         # Hence
-        listings = self.__pre.objects(prefix=prefix)
-        keys = [f's3://{self.__bucket_name}/{listing}' for listing in listings]
+        # listings = self.__pre.objects(prefix=prefix)
+        # keys = [f's3://{self.__bucket_name}/{listing}' for listing in listings]
+        logging.info(keys)
+
         block = self.__get_data(keys=keys)
+        block = block.copy()[['timestamp', 'measure']]
+        logging.info(block)
 
-        # Append a date of the format datetime64[]
-        # block['datestr'] = pd.to_datetime(block['timestamp'], unit='ms').dt.date
+        as_from = datetime.datetime.now() - datetime.timedelta(days=round(self.__arguments.get('spanning')*365))
+        logging.info('Data points starting from: %s', as_from)
 
-        return block[['timestamp', 'measure']]
+        logging.info(1000 * time.mktime(as_from.timetuple()))
+        logging.info(block['timestamp'].min())
+
+        return block
