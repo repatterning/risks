@@ -1,4 +1,6 @@
+"""Module metrics.py"""
 import logging
+
 import numpy as np
 import pandas as pd
 
@@ -6,6 +8,9 @@ import src.elements.partitions as pr
 
 
 class Metrics:
+    """
+    Metrics
+    """
 
     def __init__(self, arguments: dict):
         """
@@ -48,6 +53,12 @@ class Metrics:
         return weights.to_numpy()
 
     def __get_metrics(self, blob: pd.DataFrame, cut: int):
+        """
+
+        :param blob:
+        :param cut:
+        :return:
+        """
 
         states = blob.copy()[:cut]
 
@@ -64,6 +75,12 @@ class Metrics:
         return metrics
 
     def exc(self, data: pd.DataFrame, partition: pr.Partitions):
+        """
+
+        :param data:
+        :param partition:
+        :return:
+        """
 
         frame = data.copy()
         frame.sort_values(by='timestamp', ascending=True, inplace=True)
