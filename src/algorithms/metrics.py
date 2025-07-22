@@ -51,15 +51,15 @@ class Metrics:
 
         return weights.to_numpy()
 
-    def __get_metrics(self, mph: pd.DataFrame, cut: int):
+    def __get_metrics(self, gamma: pd.DataFrame, cut: int):
         """
 
-        :param mph:
+        :param gamma:
         :param cut:
         :return:
         """
 
-        states = mph.copy()[:cut]
+        states = gamma.copy()[:cut]
 
         metrics = pd.DataFrame(
             data={'maximum': states[self.__points].max(axis=0).values,
@@ -83,11 +83,11 @@ class Metrics:
         frame = data.copy()
         frame.sort_values(by='timestamp', ascending=True, inplace=True)
 
-        mph = pd.DataFrame(
+        gamma = pd.DataFrame(
             data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
-        mph = mph.assign(timestamp=frame['timestamp'])
+        gamma = gamma.assign(timestamp=frame['timestamp'])
 
-        metrics_ = [self.__get_metrics(mph=mph, cut=i) for i in self.__back]
+        metrics_ = [self.__get_metrics(gamma=gamma, cut=i) for i in self.__back]
         metrics = pd.concat(metrics_)
 
         metrics['catchment_id'] = partition.catchment_id
