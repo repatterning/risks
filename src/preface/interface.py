@@ -38,10 +38,9 @@ class Interface:
 
         return arguments
 
-    def exc(self, codes: list[int]) -> typing.Tuple[boto3.session.Session, s3p.S3Parameters, sr.Service, dict]:
+    def exc(self) -> typing.Tuple[boto3.session.Session, s3p.S3Parameters, sr.Service, dict]:
         """
 
-        :param codes: A set of gauge time series codes
         :return:
         """
 
@@ -50,11 +49,8 @@ class Interface:
         service: sr.Service = src.functions.service.Service(
             connector=connector, region_name=s3_parameters.region_name).exc()
         arguments: dict = self.__get_arguments(connector=connector)
+        arguments['excerpt'] = []
 
-        if codes is None:
-            arguments['excerpt'] = []
-        else:
-            arguments['excerpt'] = codes
 
         src.preface.setup.Setup(
             service=service, s3_parameters=s3_parameters).exc()
