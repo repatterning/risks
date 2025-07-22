@@ -20,7 +20,7 @@ def main():
     partitions, listings, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
 
-    src.continuous.interface.Interface(
+    src.algorithms.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc(partitions=partitions, reference=reference)
 
     # Transferring calculations to an Amazon S3 (Simple Storage Service) bucket
@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     # Modules
     import src.assets.interface
-    import src.continuous.interface
+    import src.algorithms.interface
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
     import src.functions.cache
