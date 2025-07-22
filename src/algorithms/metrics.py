@@ -8,19 +8,26 @@ import src.elements.partitions as pr
 class Metrics:
 
     def __init__(self, arguments: dict):
+        """
+
+        :param arguments:
+        """
 
         self.__arguments = arguments
 
-        # time intervals (hours)
+        # time intervals (hours), and the corresponding number of points that span each time interval
         self.__tau: np.ndarray = np.array(self.__arguments.get('tau'), dtype=float)
-
-        # The corresponding the number of points that span each time interval
         self.__points: np.ndarray = (self.__tau / self.__arguments.get('frequency')).astype(int)
 
-    def __rates(self, frame: pd.DataFrame):
+        # Back in time
+        self.__back = np.arange(-37, 0, 4)
 
-        logging.info(self.__points)
-        logging.info(frame)
+    def __rates(self, frame: pd.DataFrame):
+        """
+
+        :param frame:
+        :return:
+        """
 
         # differences
         differences_ = [frame.copy()['measure'].diff(int(i)).to_frame(name=i) for i in self.__points]
@@ -57,8 +64,8 @@ class Metrics:
         frame = data.copy()
         frame.sort_values(by='timestamp', ascending=True, inplace=True)
 
-        states = pd.DataFrame(data=self.__rates(frame=frame) * self.__weights(frame=frame),
-                              columns=self.__points)
+        states = pd.DataFrame(
+            data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
         states = states.assign(timestamp=frame['timestamp'])
 
         metrics = self.__get_metrics(states=states)
