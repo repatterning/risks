@@ -1,5 +1,4 @@
 """Module metrics.py"""
-import logging
 
 import numpy as np
 import pandas as pd
@@ -52,15 +51,15 @@ class Metrics:
 
         return weights.to_numpy()
 
-    def __get_metrics(self, blob: pd.DataFrame, cut: int):
+    def __get_metrics(self, mph: pd.DataFrame, cut: int):
         """
 
-        :param blob:
+        :param mph:
         :param cut:
         :return:
         """
 
-        states = blob.copy()[:cut]
+        states = mph.copy()[:cut]
 
         metrics = pd.DataFrame(
             data={'maximum': states[self.__points].max(axis=0).values,
@@ -84,11 +83,11 @@ class Metrics:
         frame = data.copy()
         frame.sort_values(by='timestamp', ascending=True, inplace=True)
 
-        blob = pd.DataFrame(
+        mph = pd.DataFrame(
             data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
-        blob = blob.assign(timestamp=frame['timestamp'])
+        mph = mph.assign(timestamp=frame['timestamp'])
 
-        metrics_ = [self.__get_metrics(blob=blob, cut=i) for i in self.__back]
+        metrics_ = [self.__get_metrics(mph=mph, cut=i) for i in self.__back]
         metrics = pd.concat(metrics_)
 
         metrics['catchment_id'] = partition.catchment_id
