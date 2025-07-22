@@ -11,14 +11,19 @@ class Metrics:
 
         self.__arguments = arguments
 
-        self.__tau: np.ndarray = np.array([self.__arguments.get('tau')], dtype=float)
-        frequency: float = self.__arguments.get('frequency')
-        self.__points: np.ndarray = (self.__tau / frequency).astype(int)
+        # time intervals (hours)
+        self.__tau: np.ndarray = np.array(self.__arguments.get('tau'), dtype=float)
+
+        # The corresponding the number of points that span each time interval
+        self.__points: np.ndarray = (self.__tau / self.__arguments.get('frequency')).astype(int)
 
     def __rates(self, frame: pd.DataFrame):
 
+        logging.info(self.__points)
+        logging.info(frame)
+
         # differences
-        differences_ = [frame.copy()['measure'].diff(i).to_frame(name=i) for i in self.__points]
+        differences_ = [frame.copy()['measure'].diff(int(i)).to_frame(name=i) for i in self.__points]
         differences = pd.concat(differences_, axis=1, ignore_index=False)
 
         # delta measure / delta time
@@ -30,7 +35,7 @@ class Metrics:
     def __weights(self, frame: pd.DataFrame):
 
         # delta measure / original measure
-        weights_ = [frame.copy()['measure'].pct_change(i).to_frame(name=i) for i in self.__points]
+        weights_ = [frame.copy()['measure'].pct_change(int(i)).to_frame(name=i) for i in self.__points]
         weights = pd.concat(weights_, axis=1, ignore_index=False)
 
         return weights.to_numpy()
@@ -59,4 +64,7 @@ class Metrics:
         metrics = self.__get_metrics(states=states)
         metrics['catchment_id'] = partition.catchment_id
         metrics['ts_id'] = partition.ts_id
+
         logging.info(metrics)
+
+        return metrics
