@@ -24,7 +24,7 @@ class Metrics:
         self.__points: np.ndarray = (self.__tau / self.__arguments.get('frequency')).astype(int)
 
         # Back in time
-        self.__back = np.arange(-37, 0, 4)
+        self.__limits = np.arange(-37, 0, 4)
 
     def __rates(self, frame: pd.DataFrame):
         """
@@ -51,15 +51,15 @@ class Metrics:
 
         return weights.to_numpy()
 
-    def __get_metrics(self, gamma: pd.DataFrame, cut: int):
+    def __get_metrics(self, gamma: pd.DataFrame, limit: int):
         """
 
         :param gamma:
-        :param cut:
+        :param limit:
         :return:
         """
 
-        states = gamma.copy()[:cut]
+        states = gamma.copy()[:limit]
 
         metrics = pd.DataFrame(
             data={'maximum': states[self.__points].max(axis=0).values,
@@ -87,7 +87,7 @@ class Metrics:
             data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
         gamma = gamma.assign(timestamp=frame['timestamp'])
 
-        metrics_ = [self.__get_metrics(gamma=gamma, cut=i) for i in self.__back]
+        metrics_ = [self.__get_metrics(gamma=gamma, limit=l) for l in self.__limits]
         metrics = pd.concat(metrics_)
 
         metrics['catchment_id'] = partition.catchment_id
