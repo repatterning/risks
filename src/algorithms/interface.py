@@ -9,6 +9,7 @@ import src.elements.s3_parameters as s3p
 import src.elements.service as sr
 import src.algorithms.data
 import src.algorithms.persist
+import src.algorithms.metrics
 
 
 class Interface:
@@ -48,6 +49,7 @@ class Interface:
 
         # Delayed tasks
         __data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
+        __metrics = dask.delayed(src.algorithms.metrics.Metrics(arguments=self.__arguments).exc)
         __persist = dask.delayed(src.algorithms.persist.Persist(
             reference=reference, frequency=self.__arguments.get('frequency')).exc)
 
@@ -56,7 +58,8 @@ class Interface:
         for partition in partitions:
             keys = self.__get_keys(ts_id=partition.ts_id)
             data = __data(keys=keys)
-            message = __persist(data=data, partition=partition)
+            metrics = __metrics(data=data, partition=partition)
+            message = __persist(data=data, metrics=metrics, partition=partition)
             computations.append(message)
         messages = dask.compute(computations, scheduler='threads')[0]
 
