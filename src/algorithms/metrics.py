@@ -59,6 +59,8 @@ class Metrics:
         metrics = pd.DataFrame(data={'maximum': maximum, 'minimum': minimum, 'latest': latest, 'median': median})
         metrics = metrics.assign(points=self.__points)
 
+        metrics['ending'] = states['timestamp'].max()
+
         return metrics
 
     def exc(self, data: pd.DataFrame, partition: pr.Partitions):
