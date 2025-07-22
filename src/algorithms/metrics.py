@@ -94,6 +94,4 @@ class Metrics:
         metrics['catchment_id'] = partition.catchment_id
         metrics['ts_id'] = partition.ts_id
 
-        logging.info(metrics)
-
         return metrics
