@@ -55,7 +55,7 @@ class Interface:
 
         # Compute
         computations = []
-        for partition in partitions:
+        for partition in partitions[:4]:
             keys = self.__get_keys(ts_id=partition.ts_id)
             data = __data(keys=keys)
             metrics = __metrics(data=data, partition=partition)
