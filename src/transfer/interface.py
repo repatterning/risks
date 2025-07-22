@@ -59,7 +59,7 @@ class Interface:
 
         # The strings for transferring data to Amazon S3 (Simple Storage Service)
         strings: pd.DataFrame = self.__dictionary.exc(
-            path=self.__configurations.measures_,
+            path=self.__configurations.risks_,
             extension='json', prefix=self.__configurations.prefix + '/')
 
         # Adding metadata details per instance
