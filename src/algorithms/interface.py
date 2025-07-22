@@ -59,8 +59,14 @@ class Interface:
             keys = self.__get_keys(ts_id=partition.ts_id)
             data = __data(keys=keys)
             metrics = __metrics(data=data, partition=partition)
-            message = __persist(data=data, metrics=metrics, partition=partition)
-            computations.append(message)
-        messages = dask.compute(computations, scheduler='threads')[0]
+            # message = __persist(data=data, metrics=metrics, partition=partition)
+            computations.append(metrics)
+        calculations = dask.compute(computations, scheduler='threads')[0]
 
-        logging.info(messages)
+        logging.info(calculations)
+
+        instances = pd.concat(calculations, ignore_index=True, axis=0)
+        logging.info(instances)
+
+        plate = instances.merge(reference, how='left', on=['catchment_id', 'ts_id'])
+        logging.info(plate)
