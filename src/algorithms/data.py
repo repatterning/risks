@@ -1,15 +1,11 @@
 """Module data.py"""
+import datetime
 import logging
+import time
+
 import dask.dataframe as ddf
 import numpy as np
 import pandas as pd
-import datetime
-import time
-
-import src.elements.partitions as pr
-import src.elements.s3_parameters as s3p
-import src.elements.service as sr
-import src.s3.prefix
 
 
 class Data:
@@ -17,29 +13,16 @@ class Data:
     Data
     """
 
-    def __init__(self, service: sr.Service, s3_parameters: s3p.S3Parameters, arguments: dict):
+    def __init__(self, arguments: dict):
         """
 
-        :param service: A suite of services for interacting with Amazon Web Services.
-        :param s3_parameters: The overarching S3 parameters settings of this
-                              project, e.g., region code name, buckets, etc.
         :param arguments: A set of arguments vis-à-vis calculation & storage objectives.
         """
 
-        self.__service = service
         self.__arguments = arguments
-        __s3_parameters: dict = s3_parameters._asdict()
-        __s3_arguments: dict = self.__arguments['s3']
-
-        # ...
-        self.__intermediary = __s3_parameters[__s3_arguments.get('p_prefix')] + __s3_arguments.get('affix') + '/'
 
         # Focus
         self.__dtype = {'timestamp': np.float64, 'ts_id': np.float64, 'measure': float}
-
-        # An instance for interacting with objects within an Amazon S3 prefix
-        self.__bucket_name = __s3_parameters[__s3_arguments.get('p_bucket')]
-        self.__pre = src.s3.prefix.Prefix(service=self.__service, bucket_name=self.__bucket_name)
 
     def __get_data(self, keys: list[str]):
         """
@@ -67,22 +50,11 @@ class Data:
         :return:
         """
 
-        # In focus
-        # prefix = self.__intermediary + str(partition.catchment_id) + '/' + str(partition.ts_id)
-
-        # Hence
-        # listings = self.__pre.objects(prefix=prefix)
-        # keys = [f's3://{self.__bucket_name}/{listing}' for listing in listings]
-        logging.info(keys)
-
         block = self.__get_data(keys=keys)
         block = block.copy()[['timestamp', 'measure']]
         logging.info(block)
 
         as_from = datetime.datetime.now() - datetime.timedelta(days=round(self.__arguments.get('spanning')*365))
-        logging.info('Data points starting from: %s', as_from)
+        starting = 1000 * time.mktime(as_from.timetuple())
 
-        logging.info(1000 * time.mktime(as_from.timetuple()))
-        logging.info(block['timestamp'].min())
-
-        return block
+        return block.copy().loc[block['timestamp'] >= starting, :]
