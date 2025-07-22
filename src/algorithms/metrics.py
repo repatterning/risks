@@ -67,8 +67,8 @@ class Metrics:
                   'minimum': states[self.__points].min(axis=0).values,
                   'latest': states[self.__points][-1:].squeeze().values,
                   'median': states[self.__points].median(axis=0).values})
-        metrics = metrics.assign(points=self.__points)
 
+        metrics = metrics.assign(points=self.__points)
         metrics['ending'] = states['timestamp'].max()
 
         return metrics
