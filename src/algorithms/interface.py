@@ -16,18 +16,27 @@ class Interface:
     The interface to quantiles calculations.
     """
 
-    def __init__(self, service: sr.Service, s3_parameters: s3p.S3Parameters, arguments: dict):
+    def __init__(self, service: sr.Service, s3_parameters: s3p.S3Parameters, listings: pd.DataFrame, arguments: dict):
         """
 
         :param service: A suite of services for interacting with Amazon Web Services.
         :param s3_parameters: The overarching S3 parameters settings of this
                               project, e.g., region code name, buckets, etc.
+        :param listings: date / uri / catchment_id / ts_id
         :param arguments: A set of arguments vis-à-vis calculation & storage objectives.
         """
 
         self.__service = service
         self.__s3_parameters = s3_parameters
+        self.__listings = listings
         self.__arguments = arguments
+
+    @dask.delayed
+    def __get_keys(self, ts_id: int) -> list:
+
+        keys: pd.Series = self.__listings.loc[self.__listings['ts_id'] == ts_id, 'uri']
+
+        return keys.to_list()
 
     def exc(self, partitions: list[pr.Partitions], reference: pd.DataFrame):
         """
@@ -46,7 +55,8 @@ class Interface:
         # Compute
         computations = []
         for partition in partitions:
-            data = __data(partition=partition)
+            keys = self.__get_keys(ts_id=partition.ts_id)
+            data = __data(keys=keys)
             message = __persist(data=data, partition=partition)
             computations.append(message)
         messages = dask.compute(computations, scheduler='threads')[0]
