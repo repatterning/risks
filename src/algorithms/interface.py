@@ -7,7 +7,7 @@ import pandas as pd
 import src.elements.partitions as pr
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
-import src.continuous.data
+import src.algorithms.data
 import src.continuous.persist
 
 
@@ -38,7 +38,7 @@ class Interface:
         """
 
         # Delayed tasks
-        __data = dask.delayed(src.continuous.data.Data(
+        __data = dask.delayed(src.algorithms.data.Data(
             service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc)
         __persist = dask.delayed(src.continuous.persist.Persist(
             reference=reference, frequency=self.__arguments.get('frequency')).exc)
