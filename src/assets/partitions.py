@@ -1,8 +1,8 @@
 """Module partitions.py"""
+import logging
 import datetime
 import typing
 
-import numpy as np
 import pandas as pd
 
 
@@ -50,9 +50,13 @@ class Partitions:
 
         # The years in focus, via the year start date, e.g., 2023-01-01
         limits = self.__limits()
+        logging.info(limits)
 
         # Hence, the data sets in focus vis-à-vis the years in focus
         listings = limits.merge(self.__data, how='left', on='date')
+        logging.info(listings)
+
         partitions = listings[['catchment_id', 'ts_id']].drop_duplicates()
+        logging.info(partitions)
 
         return partitions, listings
