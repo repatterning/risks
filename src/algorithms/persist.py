@@ -1,6 +1,5 @@
 """Module persist.py"""
 import json
-import logging
 import os
 
 import pandas as pd
@@ -53,7 +52,6 @@ class Persist:
         """
 
         nodes = [self.__get_nodes(section=section, points=int(points)) for points in section['points'].unique()]
-        logging.info(nodes)
 
         message = self.__objects.write(
             nodes=nodes, path=os.path.join(self.__configurations.points_, f'{ending}.json'))
