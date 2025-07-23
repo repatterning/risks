@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-import src.elements.master as mr
+import src.algorithms.series
 import src.elements.partitions as pr
 
 
@@ -18,6 +18,9 @@ class Valuations:
         """
 
         self.__arguments = arguments
+
+        # Instances
+        self.__series = src.algorithms.series.Series()
 
         # time intervals (hours), and the corresponding number of points that span each time interval
         self.__tau: np.ndarray = np.array(self.__arguments.get('tau'), dtype=float)
@@ -73,7 +76,7 @@ class Valuations:
 
         return metrics
 
-    def exc(self, data: pd.DataFrame, partition: pr.Partitions) -> mr.Master:
+    def exc(self, data: pd.DataFrame, partition: pr.Partitions) -> pd.DataFrame:
         """
 
         :param data: Consisting of fields (a) timestamp, (b) measure
@@ -89,13 +92,13 @@ class Valuations:
             data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
         gamma['timestamp'] = frame['timestamp'].values
 
-        # Empty
-        if gamma.shape[0] == 0:
-            gamma = pd.DataFrame()
+        # Series
+        if gamma.shape[0] > 0:
+            self.__series.exc(gamma=gamma, partition=partition)
 
         # Metrics
         metrics = self.__get_metrics(gamma=gamma)
         metrics['catchment_id'] = partition.catchment_id
         metrics['ts_id'] = partition.ts_id
 
-        return mr.Master(gamma=gamma, metrics=metrics)
+        return metrics
