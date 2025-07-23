@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 
+import src.elements.master as mr
 import src.elements.partitions as pr
 
 
@@ -52,7 +53,7 @@ class Metrics:
 
         return weights.to_numpy()
 
-    def __get_metrics(self, gamma: pd.DataFrame):
+    def __get_metrics(self, gamma: pd.DataFrame) -> pd.DataFrame:
         """
 
         :param gamma: weighted rates of change
@@ -72,7 +73,7 @@ class Metrics:
 
         return metrics
 
-    def exc(self, data: pd.DataFrame, partition: pr.Partitions):
+    def exc(self, data: pd.DataFrame, partition: pr.Partitions) -> mr.Master:
         """
 
         :param data: Consisting of fields (a) timestamp, (b) measure
@@ -90,11 +91,11 @@ class Metrics:
 
         # Empty
         if gamma.shape[0] == 0:
-            return pd.DataFrame()
+            gamma = pd.DataFrame()
 
         # Metrics
         metrics = self.__get_metrics(gamma=gamma)
         metrics['catchment_id'] = partition.catchment_id
         metrics['ts_id'] = partition.ts_id
 
-        return metrics
+        return mr.Master(gamma=gamma, metrics=metrics)
