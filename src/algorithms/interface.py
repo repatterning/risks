@@ -1,14 +1,13 @@
 """Module interface.py"""
-
-import os
+import logging
 
 import dask
 import pandas as pd
 
 import config
 import src.algorithms.data
-import src.algorithms.metrics
-import src.algorithms.structures
+import src.algorithms.valuations
+import src.elements.master as mr
 import src.elements.partitions as pr
 import src.functions.streams
 
@@ -55,24 +54,18 @@ class Interface:
 
         # Delayed tasks
         __data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
-        __metrics = dask.delayed(src.algorithms.metrics.Metrics(arguments=self.__arguments).exc)
+        __valuations = dask.delayed(src.algorithms.valuations.Valuations(arguments=self.__arguments).exc)
 
         # Compute
         computations = []
-        for partition in partitions:
+        for partition in partitions[:8]:
             keys = self.__get_keys(ts_id=partition.ts_id)
             data = __data(keys=keys)
-            metrics = __metrics(data=data, partition=partition)
-            computations.append(metrics)
+            master: mr.Master = __valuations(data=data, partition=partition)
+            computations.append(master.metrics)
         calculations = dask.compute(computations, scheduler='threads')[0]
 
         # Merge each instance with its descriptive attributes
         instances_ = pd.concat(calculations, ignore_index=True, axis=0)
         instances: pd.DataFrame = instances_.merge(reference, how='left', on=['catchment_id', 'ts_id'])
-
-        # Tableau
-        src.functions.streams.Streams().write(
-            blob=instances, path=os.path.join(self.__configurations.data_, 'instances.csv'))
-
-        # Structure & Persist
-        src.algorithms.structures.Structures(instances=instances).exc()
+        logging.info(instances)
