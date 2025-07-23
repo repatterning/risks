@@ -22,9 +22,6 @@ class Metrics:
         self.__tau: np.ndarray = np.array(self.__arguments.get('tau'), dtype=float)
         self.__points: np.ndarray = (self.__tau / self.__arguments.get('frequency')).astype(int)
 
-        # Back in time
-        self.__limits = np.arange(-192, 0)
-
     def __rates(self, frame: pd.DataFrame):
         """
 
@@ -46,23 +43,23 @@ class Metrics:
 
         :param frame:
         :return:
+            A numpy array of fractional river-level-percentage-change, with respect to different time spans
         """
 
-        # delta measure / original measure
+        # (delta measure) / (original measure)
         weights_ = [frame.copy()['measure'].pct_change(int(i)).to_frame(name=i) for i in self.__points]
         weights = pd.concat(weights_, axis=1, ignore_index=False)
 
         return weights.to_numpy()
 
-    def __get_metrics(self, gamma: pd.DataFrame, limit: int):
+    def __get_metrics(self, gamma: pd.DataFrame):
         """
 
-        :param gamma:
-        :param limit:
+        :param gamma: weighted rates of change
         :return:
         """
 
-        states = gamma.copy()[:limit]
+        states = gamma.copy()
 
         metrics = pd.DataFrame(
             data={'maximum': states[self.__points].max(axis=0).values,
@@ -78,8 +75,8 @@ class Metrics:
     def exc(self, data: pd.DataFrame, partition: pr.Partitions):
         """
 
-        :param data:
-        :param partition:
+        :param data: Consisting of fields (a) timestamp, (b) measure
+        :param partition: Refer to src.elements.partitions.py
         :return:
         """
 
@@ -96,8 +93,7 @@ class Metrics:
             return pd.DataFrame()
 
         # Metrics
-        metrics_ = [self.__get_metrics(gamma=gamma, limit=l) for l in self.__limits]
-        metrics = pd.concat(metrics_)
+        metrics = self.__get_metrics(gamma=gamma)
         metrics['catchment_id'] = partition.catchment_id
         metrics['ts_id'] = partition.ts_id
 
