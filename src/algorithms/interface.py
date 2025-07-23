@@ -10,8 +10,6 @@ import src.algorithms.data
 import src.algorithms.metrics
 import src.algorithms.structures
 import src.elements.partitions as pr
-import src.elements.s3_parameters as s3p
-import src.elements.service as sr
 import src.functions.streams
 
 
@@ -20,18 +18,13 @@ class Interface:
     The interface to quantiles calculations.
     """
 
-    def __init__(self, service: sr.Service, s3_parameters: s3p.S3Parameters, listings: pd.DataFrame, arguments: dict):
+    def __init__(self, listings: pd.DataFrame, arguments: dict):
         """
 
-        :param service: A suite of services for interacting with Amazon Web Services.
-        :param s3_parameters: The overarching S3 parameters settings of this
-                              project, e.g., region code name, buckets, etc.
         :param listings: date / uri / catchment_id / ts_id
         :param arguments: A set of arguments vis-à-vis calculation & storage objectives.
         """
 
-        self.__service = service
-        self.__s3_parameters = s3_parameters
         self.__listings = listings
         self.__arguments = arguments
 
