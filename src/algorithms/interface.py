@@ -34,6 +34,11 @@ class Interface:
 
     @dask.delayed
     def __get_keys(self, ts_id: int) -> list:
+        """
+
+        :param ts_id: The identification code of a gauge's time series
+        :return:
+        """
 
         keys: pd.Series = self.__listings.loc[self.__listings['ts_id'] == ts_id, 'uri']
 
