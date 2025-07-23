@@ -7,6 +7,9 @@ import src.algorithms.persist
 
 
 class Structures:
+    """
+    Structures
+    """
 
     def __init__(self, instances: pd.DataFrame):
         """
@@ -24,7 +27,7 @@ class Structures:
     def __get_section(self, ending: int) -> pd.DataFrame:
         """
 
-        :param ending:
+        :param ending: The weighted rates of change are with respect to an ending timestamp
         :return:
         """
 
