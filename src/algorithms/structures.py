@@ -1,3 +1,4 @@
+"""Module structures.py"""
 import logging
 
 import dask
