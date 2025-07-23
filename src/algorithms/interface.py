@@ -8,7 +8,7 @@ import src.elements.partitions as pr
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
 import src.algorithms.data
-import src.algorithms.persist
+import src.algorithms.structures
 import src.algorithms.metrics
 
 
@@ -47,26 +47,25 @@ class Interface:
         :return:
         """
 
+        reference.info()
+
         # Delayed tasks
         __data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         __metrics = dask.delayed(src.algorithms.metrics.Metrics(arguments=self.__arguments).exc)
-        __persist = dask.delayed(src.algorithms.persist.Persist(
-            reference=reference, frequency=self.__arguments.get('frequency')).exc)
 
         # Compute
         computations = []
-        for partition in partitions[:4]:
+        for partition in partitions:
             keys = self.__get_keys(ts_id=partition.ts_id)
             data = __data(keys=keys)
             metrics = __metrics(data=data, partition=partition)
-            # message = __persist(data=data, metrics=metrics, partition=partition)
             computations.append(metrics)
         calculations = dask.compute(computations, scheduler='threads')[0]
 
-        logging.info(calculations)
-
-        instances = pd.concat(calculations, ignore_index=True, axis=0)
+        # Merge each instance with its descriptive attributes
+        instances_ = pd.concat(calculations, ignore_index=True, axis=0)
+        instances: pd.DataFrame = instances_.merge(reference, how='left', on=['catchment_id', 'ts_id'])
         logging.info(instances)
 
-        plate = instances.merge(reference, how='left', on=['catchment_id', 'ts_id'])
-        logging.info(plate)
+        # Structure & Persist
+        src.algorithms.structures.Structures(instances=instances).exc()
