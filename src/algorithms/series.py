@@ -1,8 +1,9 @@
 import json
 import os
 
+import pandas as pd
+
 import config
-import src.elements.master as mr
 import src.elements.partitions as pr
 import src.functions.directories
 import src.functions.objects
@@ -27,19 +28,17 @@ class Series:
         # Ensure the storage area exists
         src.functions.directories.Directories().create(path=self.__path)
 
-    def exc(self, master: mr.Master, partition: pr.Partitions):
+    def exc(self, gamma: pd.DataFrame, partition: pr.Partitions) -> None:
         """
 
-        :param master:
+        :param gamma:
         :param partition:
         :return:
         """
 
-        string = master.gamma.to_json(orient='split')
+        string = gamma.to_json(orient='split')
         nodes = json.loads(string)
         nodes['attributes'] = partition._asdict()
 
-        message = self.__objects.write(
+        self.__objects.write(
             nodes=nodes, path=os.path.join(self.__configurations.points_, f'{partition.ts_id}.json'))
-
-        return message
