@@ -7,7 +7,6 @@ import pandas as pd
 import config
 import src.algorithms.data
 import src.algorithms.valuations
-import src.elements.master as mr
 import src.elements.partitions as pr
 import src.functions.streams
 
@@ -58,14 +57,15 @@ class Interface:
 
         # Compute
         computations = []
-        for partition in partitions[:8]:
+        for partition in partitions:
             keys = self.__get_keys(ts_id=partition.ts_id)
             data = __data(keys=keys)
-            master: mr.Master = __valuations(data=data, partition=partition)
-            computations.append(master.metrics)
+            metrics = __valuations(data=data, partition=partition)
+            computations.append(metrics)
         calculations = dask.compute(computations, scheduler='threads')[0]
 
         # Merge each instance with its descriptive attributes
-        instances_ = pd.concat(calculations, ignore_index=True, axis=0)
-        instances: pd.DataFrame = instances_.merge(reference, how='left', on=['catchment_id', 'ts_id'])
+        instances = pd.concat(calculations, ignore_index=True, axis=0)
+        instances = instances.copy().merge(reference, how='left', on=['catchment_id', 'ts_id'])
+        instances['hours'] = self.__arguments.get('frequency') * instances['points']
         logging.info(instances)
