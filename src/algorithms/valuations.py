@@ -1,4 +1,4 @@
-"""Module metrics.py"""
+"""Module valuations.py"""
 import numpy as np
 import pandas as pd
 
@@ -6,7 +6,7 @@ import src.elements.master as mr
 import src.elements.partitions as pr
 
 
-class Metrics:
+class Valuations:
     """
     Metrics
     """
