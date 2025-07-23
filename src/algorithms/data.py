@@ -42,6 +42,20 @@ class Data:
 
         return block
 
+    @staticmethod
+    def __set_missing(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Forward filling.  In contrast, the variational model inherently deals with missing data, hence
+                          it does not include this type of step.
+
+        :param data:
+        :return:
+        """
+
+        data['measure'] = data['measure'].ffill().values
+
+        return data
+
     def exc(self, keys: list[str]) -> pd.DataFrame:
         """
 
@@ -51,6 +65,7 @@ class Data:
 
         block = self.__get_data(keys=keys)
         block = block.copy()[['timestamp', 'measure']]
+        block = self.__set_missing(data=block.copy())
 
         # The calculations starting point
         as_from = datetime.datetime.now() - datetime.timedelta(days=round(self.__arguments.get('spanning')*365))
