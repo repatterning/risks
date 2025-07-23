@@ -14,11 +14,13 @@ class Metrics:
     Persist
     """
 
-    def __init__(self):
+    def __init__(self, instances: pd.DataFrame):
         """
 
-        Constructor
+        :param instances: The weighted rates of change of river levels with respect to one or more time spans.
         """
+
+        self.__instances = instances
 
         # The storage area
         self.__configurations = config.Config()
@@ -26,34 +28,44 @@ class Metrics:
         # For creating JSON files
         self.__objects = src.functions.objects.Objects()
 
-    @staticmethod
-    def __get_nodes(section: pd.DataFrame, points: int) -> dict:
+        # Fields
+        self.__fields = ['maximum', 'minimum', 'latest', 'median', 'points', 'hours', 'catchment_id', 'ts_id',
+                         'station_name', 'catchment_name', 'latitude', 'longitude', 'river_name', 'ending']
+
+    def __get_nodes(self, points: int) -> dict:
         """
 
-        :param section: The section of a gauge
         :param points:
         :return:
         """
 
-        frame: pd.DataFrame = section.copy().loc[section['points'] == points, :]
-        frame.drop(columns='points', inplace=True)
-
+        frame: pd.DataFrame = self.__instances.copy().loc[self.__instances['points'] == points, self.__fields]
         string = frame.copy().to_json(orient='split')
-        _data = json.loads(string)
 
-        return {points: _data}
+        return json.loads(string)
 
-    def exc(self, section: pd.DataFrame, ending: int) -> str:
+    def __persist(self, nodes, points):
         """
 
-        :param section: The weighted rates of change of river levels with respect to one or more time spans.
-        :param ending: The period ending timestamp; epoch seconds
+        :param nodes:
+        :param points:
         :return:
         """
 
-        nodes = [self.__get_nodes(section=section, points=int(points)) for points in section['points'].unique()]
+        return self.__objects.write(
+            nodes=nodes, path=os.path.join(self.__configurations.points_, f'{points:04d}.json'))
 
-        message = self.__objects.write(
-            nodes=nodes, path=os.path.join(self.__configurations.points_, f'{ending}.json'))
+    def exc(self):
+        """
 
-        return message
+
+        :return:
+        """
+
+        self.__instances.info()
+
+        computations = []
+        for points in self.__instances['points'].unique():
+            nodes = self.__get_nodes(points=int(points))
+            message = self.__persist(nodes=nodes, points=points)
+            computations.append(message)
