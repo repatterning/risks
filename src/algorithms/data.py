@@ -61,6 +61,7 @@ class Data:
 
         :param keys: A list of S3 (Simple Storage Service) uniform resource locators
         :return:
+            A data frame consisting of fields (a) timestamp, (b) measure
         """
 
         block = self.__get_data(keys=keys)
