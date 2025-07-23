@@ -1,5 +1,5 @@
 """Module metrics.py"""
-
+import logging
 import numpy as np
 import pandas as pd
 
@@ -24,7 +24,7 @@ class Metrics:
         self.__points: np.ndarray = (self.__tau / self.__arguments.get('frequency')).astype(int)
 
         # Back in time
-        self.__limits = np.arange(-37, 0, 4)
+        self.__limits = np.arange(-36, 0)
 
     def __rates(self, frame: pd.DataFrame):
         """
@@ -60,6 +60,7 @@ class Metrics:
         """
 
         states = gamma.copy()[:limit]
+        logging.info('STATES: \n%s', states)
 
         metrics = pd.DataFrame(
             data={'maximum': states[self.__points].max(axis=0).values,
@@ -83,13 +84,15 @@ class Metrics:
         frame = data.copy()
         frame.sort_values(by='timestamp', ascending=True, inplace=True)
 
+        # Weighted rates of river level change
         gamma = pd.DataFrame(
             data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
-        gamma = gamma.assign(timestamp=frame['timestamp'])
+        gamma['timestamp'] = frame['timestamp'].values
+        logging.info('gamma:\n%s', gamma)
 
+        # Metrics
         metrics_ = [self.__get_metrics(gamma=gamma, limit=l) for l in self.__limits]
         metrics = pd.concat(metrics_)
-
         metrics['catchment_id'] = partition.catchment_id
         metrics['ts_id'] = partition.ts_id
 
