@@ -1,15 +1,18 @@
 """Module interface.py"""
-import logging
+
+import os
 
 import dask
 import pandas as pd
 
+import config
 import src.algorithms.data
 import src.algorithms.metrics
 import src.algorithms.structures
 import src.elements.partitions as pr
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
+import src.functions.streams
 
 
 class Interface:
@@ -31,6 +34,9 @@ class Interface:
         self.__s3_parameters = s3_parameters
         self.__listings = listings
         self.__arguments = arguments
+
+        # Configurations
+        self.__configurations = config.Config()
 
     @dask.delayed
     def __get_keys(self, ts_id: int) -> list:
@@ -70,7 +76,10 @@ class Interface:
         # Merge each instance with its descriptive attributes
         instances_ = pd.concat(calculations, ignore_index=True, axis=0)
         instances: pd.DataFrame = instances_.merge(reference, how='left', on=['catchment_id', 'ts_id'])
-        logging.info(instances)
+
+        # Tableau
+        src.functions.streams.Streams().write(
+            blob=instances, path=os.path.join(self.__configurations.data_, 'instances.csv'))
 
         # Structure & Persist
         src.algorithms.structures.Structures(instances=instances).exc()
