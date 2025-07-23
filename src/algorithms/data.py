@@ -1,6 +1,5 @@
 """Module data.py"""
 import datetime
-import logging
 import time
 
 import dask.dataframe as ddf
@@ -27,7 +26,7 @@ class Data:
     def __get_data(self, keys: list[str]):
         """
 
-        :param keys:
+        :param keys: A list of S3 (Simple Storage Service) uniform resource locators
         :return:
         """
 
@@ -46,14 +45,14 @@ class Data:
     def exc(self, keys: list[str]) -> pd.DataFrame:
         """
 
-        :param keys:
+        :param keys: A list of S3 (Simple Storage Service) uniform resource locators
         :return:
         """
 
         block = self.__get_data(keys=keys)
         block = block.copy()[['timestamp', 'measure']]
-        logging.info(block)
 
+        # The calculations starting point
         as_from = datetime.datetime.now() - datetime.timedelta(days=round(self.__arguments.get('spanning')*365))
         starting = 1000 * time.mktime(as_from.timetuple())
 
