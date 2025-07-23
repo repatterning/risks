@@ -58,9 +58,11 @@ class Setup:
 
         # An instance for interacting with local directories
         directories = src.functions.directories.Directories()
+        directories.cleanup(path=self.__configurations.data_)
         directories.cleanup(path=self.__configurations.warehouse)
 
-        states = [directories.create(p) for p in [self.__configurations.menu_, self.__configurations.points_]]
+        states = [directories.create(p)
+                  for p in [self.__configurations.data_,  self.__configurations.menu_, self.__configurations.points_]]
 
         return all(states)
 
