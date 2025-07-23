@@ -1,5 +1,4 @@
 """Module metrics.py"""
-import logging
 import numpy as np
 import pandas as pd
 
@@ -44,6 +43,11 @@ class Metrics:
         return rates
 
     def __weights(self, frame: pd.DataFrame):
+        """
+
+        :param frame:
+        :return:
+        """
 
         # delta measure / original measure
         weights_ = [frame.copy()['measure'].pct_change(int(i)).to_frame(name=i) for i in self.__points]
@@ -60,7 +64,6 @@ class Metrics:
         """
 
         states = gamma.copy()[:limit]
-        logging.info('STATES: \n%s', states)
 
         metrics = pd.DataFrame(
             data={'maximum': states[self.__points].max(axis=0).values,
@@ -88,7 +91,10 @@ class Metrics:
         gamma = pd.DataFrame(
             data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
         gamma['timestamp'] = frame['timestamp'].values
-        logging.info('gamma:\n%s', gamma)
+
+        # Empty
+        if gamma.shape[0] == 0:
+            return pd.DataFrame()
 
         # Metrics
         metrics_ = [self.__get_metrics(gamma=gamma, limit=l) for l in self.__limits]
