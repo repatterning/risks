@@ -4,12 +4,12 @@ import logging
 import dask
 import pandas as pd
 
+import src.algorithms.data
+import src.algorithms.metrics
+import src.algorithms.structures
 import src.elements.partitions as pr
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
-import src.algorithms.data
-import src.algorithms.structures
-import src.algorithms.metrics
 
 
 class Interface:
