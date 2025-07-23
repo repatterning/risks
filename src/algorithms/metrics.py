@@ -1,4 +1,4 @@
-"""Module persist.py"""
+"""Module metrics.py"""
 import json
 import os
 
@@ -9,7 +9,7 @@ import src.functions.directories
 import src.functions.objects
 
 
-class Persist:
+class Metrics:
     """
     Persist
     """
