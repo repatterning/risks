@@ -23,7 +23,7 @@ class Metrics:
         self.__points: np.ndarray = (self.__tau / self.__arguments.get('frequency')).astype(int)
 
         # Back in time
-        self.__limits = np.arange(-36, 0)
+        self.__limits = np.arange(-192, 0)
 
     def __rates(self, frame: pd.DataFrame):
         """
@@ -36,9 +36,8 @@ class Metrics:
         differences_ = [frame.copy()['measure'].diff(int(i)).to_frame(name=i) for i in self.__points]
         differences = pd.concat(differences_, axis=1, ignore_index=False)
 
-        # delta measure / delta time
-        # rates = pd.DataFrame(data=np.true_divide(differences.to_numpy(), self.__tau), columns=self.__points)
-        rates = np.true_divide(differences.to_numpy(), self.__tau)
+        # 1000 * (delta measure) / (delta time); wherein 1000 converts metres to millimetres
+        rates = 1000 * np.true_divide(differences.to_numpy(), self.__tau)
 
         return rates
 
