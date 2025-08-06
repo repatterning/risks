@@ -1,15 +1,17 @@
 """Module persist.py"""
+import logging
 import json
 import os
 
 import pandas as pd
+import numpy as np
 
 import config
 import src.functions.directories
 import src.functions.objects
 
 
-class Metrics:
+class Persist:
     """
     Persist
     """
@@ -35,11 +37,12 @@ class Metrics:
     def __get_nodes(self, points: int) -> dict:
         """
 
-        :param points:
+        :param points: The number of points across which rate calculations are made, e.g., 1 -> 0.25 hours,
+                       4 -> 1 hour, etc.
         :return:
         """
 
-        frame: pd.DataFrame = self.__instances.copy().loc[self.__instances['points'] == points, self.__fields]
+        frame: pd.DataFrame = self.__instances.copy().loc[self.__instances['points'] == points, :]
         string = frame.copy().to_json(orient='split')
 
         return json.loads(string)
@@ -55,17 +58,17 @@ class Metrics:
         return self.__objects.write(
             nodes=nodes, path=os.path.join(self.__configurations.points_, f'{points:04d}.json'))
 
-    def exc(self):
+    def exc(self, points_: np.ndarray):
         """
 
-
+        :param points_: Each array value denotes the number of points across which rate calculations
+                        are made, e.g., 1 -> 0.25 hours, 4 -> 1 hour, etc.
         :return:
         """
 
-        self.__instances.info()
-
         computations = []
-        for points in self.__instances['points'].unique():
+        for points in points_:
             nodes = self.__get_nodes(points=int(points))
             message = self.__persist(nodes=nodes, points=points)
             computations.append(message)
+        logging.info(computations)
