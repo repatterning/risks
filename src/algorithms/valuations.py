@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-import src.algorithms.series
+
 import src.elements.partitions as pr
 
 
@@ -18,9 +18,6 @@ class Valuations:
         """
 
         self.__arguments = arguments
-
-        # Instances
-        self.__series = src.algorithms.series.Series()
 
         # time intervals (hours), and the corresponding number of points that span each time interval
         self.__tau: np.ndarray = np.array(self.__arguments.get('tau'), dtype=float)
@@ -92,9 +89,9 @@ class Valuations:
             data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
         gamma['timestamp'] = frame['timestamp'].values
 
-        # Series
-        if gamma.shape[0] > 0:
-            self.__series.exc(gamma=gamma, partition=partition)
+        # Empty
+        if gamma.shape[0] == 0:
+            return pd.DataFrame()
 
         # Metrics
         metrics = self.__get_metrics(gamma=gamma)
