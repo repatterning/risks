@@ -17,8 +17,6 @@ class Config:
         Constructor
         """
 
-        self.data_: str = os.path.join(os.getcwd(), 'data')
-
         self.warehouse: str = os.path.join(os.getcwd(), 'warehouse')
         self.risks_ = os.path.join(self.warehouse, 'risks')
         self.points_ = os.path.join(self.risks_, 'points')
