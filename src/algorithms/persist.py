@@ -31,8 +31,8 @@ class Persist:
         self.__objects = src.functions.objects.Objects()
 
         # Fields
-        self.__fields = ['maximum', 'minimum', 'latest', 'median', 'points', 'hours', 'catchment_id', 'ts_id',
-                         'station_name', 'catchment_name', 'latitude', 'longitude', 'river_name', 'ending']
+        # self.__fields = ['maximum', 'minimum', 'latest', 'median', 'points', 'hours', 'catchment_id', 'ts_id',
+        #                  'station_name', 'catchment_name', 'latitude', 'longitude', 'river_name', 'ending']
 
     def __get_nodes(self, points: int) -> dict:
         """
