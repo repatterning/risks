@@ -2,6 +2,7 @@
 import logging
 import os
 
+import numpy as np
 import pandas as pd
 
 import config
@@ -21,31 +22,36 @@ class Menu:
         self.__configurations = config.Config()
         self.__objects = src.functions.objects.Objects()
 
-    def __menu(self, reference: pd.DataFrame):
+    def __menu(self, frame: pd.DataFrame):
         """
 
-        :param reference:
+        :param frame:
         :return:
         """
 
-        excerpt = reference.copy().sort_values(by=['catchment_name', 'station_name'], ascending=True)
-
-        # Menu
-        names = (excerpt['station_name'] + '/' + excerpt['catchment_name']).to_numpy()
-        frame = pd.DataFrame(data={'desc': excerpt['ts_id'].to_numpy(), 'name': names})
         nodes = frame.to_dict(orient='records')
 
         return self.__objects.write(
             nodes=nodes, path=os.path.join(self.__configurations.menu_, 'menu.json'))
 
 
-    def exc(self, reference: pd.DataFrame):
+    def exc(self, points_: np.ndarray, frequency: float):
         """
 
-        :param reference: The reference sheet of the water level gauges.
+        :param points_:
+        :param frequency:
         :return:
         """
 
-        message = self.__menu(reference=reference)
+        # Menu codes
+        codes = [f'{p:04d}' for p in points_]
 
-        logging.info('Graphing Menu ->\n%s', message)
+        # Menu Names
+        hours = frequency * points_
+        names = [f'{h} hours' if h != 1 else f'{int(h)} hour' for h in hours ]
+
+        # Build the menu
+        frame = pd.DataFrame(data={'desc': codes, 'name': names})
+        message = self.__menu(frame=frame)
+
+        logging.info('Menu ->\n%s', message)
