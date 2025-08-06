@@ -2,7 +2,6 @@
 import datetime
 import typing
 
-import numpy as np
 import pandas as pd
 
 
@@ -42,22 +41,6 @@ class Partitions:
 
         return limits
 
-    def __details(self) -> pd.DataFrame:
-        """
-
-        :return:
-        """
-
-        codes = np.unique(np.array(self.__arguments.get('excerpt')))
-
-        if codes.size == 0:
-            return  self.__data
-
-        catchments = self.__data.loc[self.__data['ts_id'].isin(codes), 'catchment_id'].unique()
-        data = self.__data.copy().loc[self.__data['catchment_id'].isin(catchments), :]
-
-        return data if data.shape[0] > 0 else self.__data
-
     def exc(self) -> typing.Tuple[pd.DataFrame, pd.DataFrame]:
         """
 
@@ -67,11 +50,10 @@ class Partitions:
         # The years in focus, via the year start date, e.g., 2023-01-01
         limits = self.__limits()
 
-        # The data sets details
-        details = self.__details()
-
         # Hence, the data sets in focus vis-à-vis the years in focus
-        listings = limits.merge(details, how='left', on='date')
+        listings = limits.merge(self.__data, how='left', on='date')
+
+        # The unique pairings of catchment identification code & series identification code
         partitions = listings[['catchment_id', 'ts_id']].drop_duplicates()
 
         return partitions, listings

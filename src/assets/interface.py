@@ -4,7 +4,6 @@ import typing
 import pandas as pd
 
 import src.assets.gauges
-import src.assets.menu
 import src.assets.partitions
 import src.assets.reference
 import src.elements.partitions as pr
@@ -57,10 +56,6 @@ class Interface:
 
         # The reference sheet of gauges.  Each instance encodes the attributes of a gauge.
         reference = src.assets.reference.Reference(s3_parameters=self.__s3_parameters).exc()
-
-        # Menu: For selecting graphs.
-        booleans = reference['ts_id'].isin(gauges['ts_id'].unique())
-        src.assets.menu.Menu().exc(reference=reference.copy().loc[booleans, :])
 
         # Strings for data reading.
         partitions, listings = src.assets.partitions.Partitions(

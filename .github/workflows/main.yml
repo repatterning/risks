@@ -1,4 +1,4 @@
-name: 'Hydrography: Measurements'
+name: 'Hydrography: Risks'
 
 on: [push]
 
@@ -45,15 +45,9 @@ jobs:
           echo "Issues in relation to logic (F7), syntax (Python E9, Flake F7), mathematical
           formulae symbols (F63), undefined variable names (F82):"
           
-          printf "\n src/continuous "
-          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/continuous
-          
           printf "\n src/assets "
           flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/assets
-          
-          printf "\n src/split "
-          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/split
-          
+                    
           printf "\n src/elements "
           flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/elements
           
@@ -73,16 +67,10 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           printf "\n\n"
           echo "Complexity issues:"
-          
-          printf "\n src/continuous "
-          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/continuous
-          
+     
           printf "\n src/assets "
           flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/assets
-          
-          printf "\n src/split "
-          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/split
-          
+ 
           printf "\n src/elements "
           flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/elements
           
@@ -103,16 +91,10 @@ jobs:
         run: |
           printf "\n"
           echo "============================= pylint session starts =============================="
-
-          printf "\n Package src/continuous"
-          pylint --rcfile .pylintrc src/continuous
-          
+     
           printf "\n Package src/assets"
           pylint --rcfile .pylintrc src/assets
-          
-          printf "\n Package src/split"
-          pylint --rcfile .pylintrc src/split
-          
+        
           printf "\n Package src/elements"
           pylint --rcfile .pylintrc src/elements
           
