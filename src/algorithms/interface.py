@@ -1,14 +1,18 @@
 """Module interface.py"""
 import logging
+import os
 
 import dask
 import pandas as pd
+import numpy as np
 
 import config
 import src.algorithms.data
 import src.algorithms.valuations
 import src.elements.partitions as pr
 import src.functions.streams
+import src.algorithms.persist
+import src.algorithms.menu
 
 
 class Interface:
@@ -68,4 +72,13 @@ class Interface:
         instances = pd.concat(calculations, ignore_index=True, axis=0)
         instances = instances.copy().merge(reference, how='left', on=['catchment_id', 'ts_id'])
         instances['hours'] = self.__arguments.get('frequency') * instances['points']
-        logging.info(instances)
+        instances.info()
+
+        # Persist
+        points_: np.ndarray = instances['points'].unique()
+        src.algorithms.persist.Persist(instances=instances).exc(points_=points_)
+        src.algorithms.menu.Menu().exc(points_=points_, frequency=self.__arguments.get('frequency'))
+
+        # For Tableau
+        streams = src.functions.streams.Streams()
+        streams.write(blob=instances, path=os.path.join(self.__configurations.data_, 'instances.csv'))
