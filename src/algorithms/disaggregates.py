@@ -1,15 +1,18 @@
-
+"""Module disaggregates.py"""
 import json
 
 import pandas as pd
 
 
 class Disaggregates:
+    """
+    Creates dictionary nodes by catchment.
+    """
 
     def __init__(self, frame: pd.DataFrame):
         """
 
-        :param frame:
+        :param frame: Per instance, millimetre per hour metrics and descriptive attributes
         """
 
         self.__frame = frame
@@ -17,7 +20,7 @@ class Disaggregates:
     def __get_disaggregate(self, catchment_id: int):
         """
 
-        :param catchment_id:
+        :param catchment_id: The identification doe of a catchment area.
         :return:
         """
 
