@@ -16,6 +16,14 @@ class Disaggregates:
         """
 
         self.__frame = frame
+        self.__catchments = self.__get_catchments()
+
+    def __get_catchments(self) -> dict:
+
+        data = self.__frame[['catchment_id', 'catchment_name']].drop_duplicates()
+        values = data.set_index(keys='catchment_id')
+
+        return values.to_dict()['catchment_name']
         
     def __get_disaggregate(self, catchment_id: int):
         """
@@ -24,9 +32,12 @@ class Disaggregates:
         :return:
         """
 
-        latest = self.__frame.copy().loc[self.__frame['catchment_id'] == catchment_id, :]
+        latest: pd.DataFrame = self.__frame.copy().loc[self.__frame['catchment_id'] == catchment_id, :]
+        latest.drop(columns=['catchment_id', 'catchment_name'], inplace=True)
         string = latest.to_json(orient='split')
         values = json.loads(string)
+        values['catchment_id'] = int(catchment_id)
+        values['catchment_name'] = self.__catchments[catchment_id]
     
         return values
 
