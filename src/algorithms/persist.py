@@ -1,15 +1,14 @@
 """Module persist.py"""
 import logging
-import json
 import os
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 import config
+import src.algorithms.disaggregates
 import src.functions.directories
 import src.functions.objects
-import src.algorithms.disaggregates
 
 
 class Persist:
@@ -42,7 +41,7 @@ class Persist:
         """
 
         frame: pd.DataFrame = self.__instances.copy().loc[self.__instances['points'] == points, :]
-        nodes = src.algorithms.disaggregates.Disaggregates(frame=frame).__call__()
+        nodes = src.algorithms.disaggregates.Disaggregates(frame=frame)()
 
         return nodes
 
