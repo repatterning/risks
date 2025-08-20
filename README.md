@@ -12,7 +12,7 @@ Develop<br>
 
 **Risks**
 
-Determines rates of change of river levels, around a gauge point.
+Determines rates of change of river levels, vis-à-vis a gauge point.
 
 <br>
 <br>
