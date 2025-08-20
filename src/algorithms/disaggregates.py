@@ -24,7 +24,7 @@ class Disaggregates:
         values = data.set_index(keys='catchment_id')
 
         return values.to_dict()['catchment_name']
-        
+
     def __get_disaggregate(self, catchment_id: int):
         """
 
@@ -38,7 +38,7 @@ class Disaggregates:
         values = json.loads(string)
         values['catchment_id'] = int(catchment_id)
         values['catchment_name'] = self.__catchments[catchment_id]
-    
+
         return values
 
     def __call__(self) -> list[dict]:
