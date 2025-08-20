@@ -1,12 +1,12 @@
 """Module persist.py"""
 import logging
-import json
 import os
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 import config
+import src.algorithms.disaggregates
 import src.functions.directories
 import src.functions.objects
 
@@ -30,12 +30,10 @@ class Persist:
         # For creating JSON files
         self.__objects = src.functions.objects.Objects()
 
-        # Fields
-        # self.__fields = ['maximum', 'minimum', 'latest', 'median', 'points', 'hours', 'catchment_id', 'ts_id',
-        #                  'station_name', 'catchment_name', 'latitude', 'longitude', 'river_name', 'ending']
-
-    def __get_nodes(self, points: int) -> dict:
+    def __get_nodes(self, points: int) -> dict | list[dict]:
         """
+        string = frame.copy().to_json(orient='split')
+        json.loads(string)
 
         :param points: The number of points across which rate calculations are made, e.g., 1 -> 0.25 hours,
                        4 -> 1 hour, etc.
@@ -43,9 +41,9 @@ class Persist:
         """
 
         frame: pd.DataFrame = self.__instances.copy().loc[self.__instances['points'] == points, :]
-        string = frame.copy().to_json(orient='split')
+        nodes = src.algorithms.disaggregates.Disaggregates(frame=frame)()
 
-        return json.loads(string)
+        return nodes
 
     def __persist(self, nodes, points):
         """
