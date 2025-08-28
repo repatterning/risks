@@ -10,7 +10,7 @@ class Interface:
         self.__instances = instances
         self.__reference = reference
 
-    def __get_attributes(self):
+    def __get_attributes(self) -> geopandas.GeoDataFrame:
 
         attributes = geopandas.GeoDataFrame(
             self.__reference,
@@ -31,7 +31,9 @@ class Interface:
         """
 
         points_ = self.__instances['points'].unique()
+        attributes = self.__get_attributes()
 
         for points in points_:
 
-            self.__get_data(points=points)
+            data = self.__get_data(points=points)
+            attributes.merge(data, how='left', on=['catchment_id', 'station_id'])
