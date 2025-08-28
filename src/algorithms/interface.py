@@ -36,7 +36,7 @@ class Interface:
 
         return keys.to_list()
 
-    def exc(self, partitions: list[pr.Partitions], reference: pd.DataFrame):
+    def exc(self, partitions: list[pr.Partitions], reference: pd.DataFrame) -> pd.DataFrame:
         """
         streams = src.functions.streams.Streams()
         streams.write(blob=instances, path=os.path.join(self.__configurations.data_, 'instances.csv'))
@@ -67,6 +67,6 @@ class Interface:
         instances['hours'] = self.__arguments.get('frequency') * instances['points']
 
         # Persist
-        # points_: np.ndarray = instances['points'].unique()
         src.algorithms.persist.Persist(instances=instances).exc()
-        # src.algorithms.menu.Menu().exc(points_=points_, frequency=self.__arguments.get('frequency'))
+
+        return instances
