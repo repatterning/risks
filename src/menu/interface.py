@@ -1,4 +1,4 @@
-"""Module menu.py"""
+"""Module interface.py"""
 import logging
 import os
 
