@@ -5,8 +5,9 @@ import pandas as pd
 
 class Interface:
 
-    def __init__(self, reference: pd.DataFrame):
+    def __init__(self, instances: pd.DataFrame, reference: pd.DataFrame):
 
+        self.__instances = instances
         self.__reference = reference
 
     def __get_attributes(self):
@@ -19,10 +20,13 @@ class Interface:
 
         return attributes
 
-    def exc(self, instances: pd.DataFrame):
+    def __get_data(self, points: int) -> pd.DataFrame:
+
+        return self.__instances.copy().loc[self.__instances['points'] == points, :]
+
+    def exc(self, ):
         """
-        
-        :param instances:
+
         :return:
         """
 
