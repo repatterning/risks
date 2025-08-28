@@ -20,9 +20,17 @@ class Interface:
 
         return attributes
 
-    def __get_data(self, points: int) -> pd.DataFrame:
+    def __get_data(self, points: int) -> geopandas.GeoDataFrame:
 
-        return self.__instances.copy().loc[self.__instances['points'] == points, :]
+        values = self.__instances.copy().loc[self.__instances['points'] == points, :]
+
+        data = geopandas.GeoDataFrame(
+            values,
+            geometry=geopandas.points_from_xy(values['longitude'], values['latitude'])
+        )
+        data.crs = 'epsg:4326'
+
+        return data
 
     def exc(self, ):
         """
@@ -31,9 +39,8 @@ class Interface:
         """
 
         points_ = self.__instances['points'].unique()
-        attributes = self.__get_attributes()
 
         for points in points_:
 
-            data = self.__get_data(points=points)
-            attributes.merge(data, how='left', on=['catchment_id', 'station_id'])
+            self.__get_data(points=points)
+
