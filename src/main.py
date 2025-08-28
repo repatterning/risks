@@ -20,8 +20,10 @@ def main():
     partitions, listings, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
 
-    src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
+    instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
         partitions=partitions, reference=reference)
+
+    src.menu.interface.Interface().exc(points_=instances['points'].unique(), frequency=arguments.get('frequency'))
 
     # Transferring calculations to an Amazon S3 (Simple Storage Service) bucket
     src.transfer.interface.Interface(
@@ -50,6 +52,7 @@ if __name__ == '__main__':
     import src.functions.cache
     import src.preface.interface
     import src.transfer.interface
+    import src.menu.interface
 
     connector: boto3.session.Session
     s3_parameters: s3p.S3Parameters
