@@ -23,7 +23,8 @@ def main():
     instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
         partitions=partitions, reference=reference)
 
-    src.menu.interface.Interface().exc(points_=instances['points'].unique(), frequency=arguments.get('frequency'))
+    src.menu.interface.Interface().exc(
+        points_=instances['points'].unique(), frequency=arguments.get('frequency'))
 
     # Transferring calculations to an Amazon S3 (Simple Storage Service) bucket
     src.transfer.interface.Interface(
