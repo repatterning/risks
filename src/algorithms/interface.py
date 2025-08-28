@@ -1,6 +1,5 @@
 """Module interface.py"""
 import dask
-import numpy as np
 import pandas as pd
 
 import src.algorithms.data
@@ -68,6 +67,6 @@ class Interface:
         instances['hours'] = self.__arguments.get('frequency') * instances['points']
 
         # Persist
-        points_: np.ndarray = instances['points'].unique()
-        src.algorithms.persist.Persist(instances=instances).exc(points_=points_)
-        src.algorithms.menu.Menu().exc(points_=points_, frequency=self.__arguments.get('frequency'))
+        # points_: np.ndarray = instances['points'].unique()
+        src.algorithms.persist.Persist(instances=instances).exc()
+        # src.algorithms.menu.Menu().exc(points_=points_, frequency=self.__arguments.get('frequency'))
