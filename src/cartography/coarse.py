@@ -10,15 +10,15 @@ import src.cartography.cuttings
 
 class Coarse:
 
-    def __init__(self, reference: pd.DataFrame, boundaries: geopandas.GeoDataFrame):
+    def __init__(self, reference: pd.DataFrame, fine: geopandas.GeoDataFrame):
         """
 
         :param reference: Each instance represents a distinct gauge station, alongside its details.
-        :param boundaries: The low level, most granular, catchment-segments boundaries.
+        :param fine: The low level, most granular, catchment-segments fine.
         """
         
         self.__reference = reference
-        self.__boundaries = boundaries
+        self.__fine = fine
 
     def __get_attributes(self) -> geopandas.GeoDataFrame:
         """
@@ -49,15 +49,15 @@ class Coarse:
             instances = attributes.copy().loc[attributes['catchment_id'] == code, :]
 
             # Which [child] polygons are associated with the catchment in focus?
-            identifiers = self.__boundaries.geometry.map(src.cartography.cuttings.Cuttings(instances=instances).inside)
-            applicable = self.__boundaries.copy().loc[identifiers > 0, :]
+            identifiers = self.__fine.geometry.map(src.cartography.cuttings.Cuttings(instances=instances).inside)
+            applicable = self.__fine.copy().loc[identifiers > 0, :]
 
             # Convert the polygons into a single polygon.
             frame = geopandas.GeoDataFrame({'catchment_id': [code], 'catchment_name': [name]})
             _coarse.append(frame.set_geometry([shapely.unary_union(applicable.geometry)]))
 
         coarse: geopandas.GeoDataFrame = pd.concat(_coarse, ignore_index=True, axis=0)
-        coarse.crs = self.__boundaries.crs.srs
+        coarse.crs = self.__fine.crs.srs
         logging.info('Coördinate Reference System:\n%s', coarse.crs)
 
         return coarse
