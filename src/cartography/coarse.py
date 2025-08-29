@@ -13,8 +13,8 @@ class Coarse:
     def __init__(self, reference: pd.DataFrame, boundaries: geopandas.GeoDataFrame):
         """
 
-        :param reference:
-        :param boundaries:
+        :param reference: Each instance represents a distinct gauge station, alongside its details.
+        :param boundaries: The low level, most granular, catchment-segments boundaries.
         """
         
         self.__reference = reference
@@ -44,16 +44,16 @@ class Coarse:
         catchments = self.__reference[['catchment_id', 'catchment_name']].drop_duplicates()
 
         _coarse = []
-        for c, n in zip(catchments.catchment_id.values, catchments.catchment_name.values):
+        for code, name in zip(catchments.catchment_id.values, catchments.catchment_name.values):
 
-            instances = attributes.copy().loc[attributes['catchment_id'] == c, :]
+            instances = attributes.copy().loc[attributes['catchment_id'] == code, :]
 
-            # Which [child] polygons are associated with the catchment are in focus?
+            # Which [child] polygons are associated with the catchment in focus?
             identifiers = self.__boundaries.geometry.map(src.cartography.cuttings.Cuttings(instances=instances).inside)
             applicable = self.__boundaries.copy().loc[identifiers > 0, :]
 
             # Convert the polygons into a single polygon.
-            frame = geopandas.GeoDataFrame({'catchment_id': [c], 'catchment_name': [n]})
+            frame = geopandas.GeoDataFrame({'catchment_id': [code], 'catchment_name': [name]})
             _coarse.append(frame.set_geometry([shapely.unary_union(applicable.geometry)]))
 
         coarse: geopandas.GeoDataFrame = pd.concat(_coarse, ignore_index=True, axis=0)
