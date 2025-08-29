@@ -15,13 +15,13 @@ def main():
 
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info('Starting: %s', datetime.datetime.now().isoformat(timespec='microseconds'))
-    logger.info(arguments)
 
     # The time series partitions, the reference sheet of gauges
     partitions, listings, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
     logger.info(reference)
 
+    # Hence
     instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
         partitions=partitions, reference=reference)
 
