@@ -1,10 +1,8 @@
 """Module interface.py"""
 import dask
-import numpy as np
 import pandas as pd
 
 import src.algorithms.data
-import src.algorithms.menu
 import src.algorithms.persist
 import src.algorithms.valuations
 import src.elements.partitions as pr
@@ -37,7 +35,7 @@ class Interface:
 
         return keys.to_list()
 
-    def exc(self, partitions: list[pr.Partitions], reference: pd.DataFrame):
+    def exc(self, partitions: list[pr.Partitions], reference: pd.DataFrame) -> pd.DataFrame:
         """
         streams = src.functions.streams.Streams()
         streams.write(blob=instances, path=os.path.join(self.__configurations.data_, 'instances.csv'))
@@ -68,6 +66,6 @@ class Interface:
         instances['hours'] = self.__arguments.get('frequency') * instances['points']
 
         # Persist
-        points_: np.ndarray = instances['points'].unique()
-        src.algorithms.persist.Persist(instances=instances).exc(points_=points_)
-        src.algorithms.menu.Menu().exc(points_=points_, frequency=self.__arguments.get('frequency'))
+        src.algorithms.persist.Persist(instances=instances).exc()
+
+        return instances

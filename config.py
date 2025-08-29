@@ -2,7 +2,6 @@
 Module config
 """
 import os
-import datetime
 
 
 class Config:
@@ -21,6 +20,7 @@ class Config:
         self.risks_ = os.path.join(self.warehouse, 'risks')
         self.points_ = os.path.join(self.risks_, 'points')
         self.menu_ = os.path.join(self.risks_, 'menu')
+        self.maps_ = os.path.join(self.risks_, 'maps')
 
         # Template
         self.s3_parameters_key = 's3_parameters.yaml'

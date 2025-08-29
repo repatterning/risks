@@ -1,4 +1,4 @@
-"""Module menu.py"""
+"""Module interface.py"""
 import logging
 import os
 
@@ -9,7 +9,7 @@ import config
 import src.functions.objects
 
 
-class Menu:
+class Interface:
     """
     Menu
     """

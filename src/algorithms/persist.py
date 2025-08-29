@@ -23,6 +23,7 @@ class Persist:
         """
 
         self.__instances = instances
+        self.__points_: np.ndarray = instances['points'].unique()
 
         # The storage area
         self.__configurations = config.Config()
@@ -56,16 +57,16 @@ class Persist:
         return self.__objects.write(
             nodes=nodes, path=os.path.join(self.__configurations.points_, f'{points:04d}.json'))
 
-    def exc(self, points_: np.ndarray):
+    def exc(self):
         """
 
-        :param points_: Each array value denotes the number of points across which rate calculations
-                        are made, e.g., 1 -> 0.25 hours, 4 -> 1 hour, etc.
         :return:
         """
 
+        # Each `self.__points_` array value denotes the number of points across which rate calculations
+        # are made, e.g., 1 -> 0.25 hours, 4 -> 1 hour, etc.
         computations = []
-        for points in points_:
+        for points in self.__points_:
             nodes = self.__get_nodes(points=int(points))
             message = self.__persist(nodes=nodes, points=points)
             computations.append(message)

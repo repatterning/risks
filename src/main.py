@@ -19,9 +19,18 @@ def main():
     # The time series partitions, the reference sheet of gauges
     partitions, listings, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
+    logger.info(reference)
 
-    src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
+    # Hence
+    instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
         partitions=partitions, reference=reference)
+
+    src.cartography.interface.Interface(
+        connector=connector, s3_parameters=s3_parameters, instances=instances, reference=reference).exc(
+        n_catchments_visible=arguments.get('rates').get('n_catchments_visible'))
+
+    src.menu.interface.Interface().exc(
+        points_=instances['points'].unique(), frequency=arguments.get('frequency'))
 
     # Transferring calculations to an Amazon S3 (Simple Storage Service) bucket
     src.transfer.interface.Interface(
@@ -45,9 +54,11 @@ if __name__ == '__main__':
     # Modules
     import src.assets.interface
     import src.algorithms.interface
+    import src.cartography.interface
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
     import src.functions.cache
+    import src.menu.interface
     import src.preface.interface
     import src.transfer.interface
 
