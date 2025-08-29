@@ -46,10 +46,7 @@ class Interface:
         :return:
         """
 
-        points_ = self.__instances['points'].unique()
-
-
-        for points in points_:
+        for points in self.__instances['points'].unique():
 
             self.__get_data(points=points)
 
