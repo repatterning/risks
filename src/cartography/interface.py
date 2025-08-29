@@ -13,7 +13,8 @@ import src.cartography.illustrate
 
 class Interface:
 
-    def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters, instances: pd.DataFrame, reference: pd.DataFrame):
+    def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters,
+                 instances: pd.DataFrame, reference: pd.DataFrame):
 
         self.__connector = connector
         self.__s3_parameters = s3_parameters
