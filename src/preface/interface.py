@@ -49,7 +49,6 @@ class Interface:
         arguments: dict = self.__get_arguments(connector=connector)
         arguments['excerpt'] = []
 
-
         src.preface.setup.Setup(
             service=service, s3_parameters=s3_parameters).exc()
 
