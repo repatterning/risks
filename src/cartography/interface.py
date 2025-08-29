@@ -46,7 +46,9 @@ class Interface:
         :return:
         """
 
+        coarse = self.__get_coarse_boundaries()
+
         for points in self.__instances['points'].unique():
 
-            self.__get_data(points=points)
+            data = self.__get_data(points=points)
 
