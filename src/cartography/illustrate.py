@@ -6,6 +6,7 @@ import geopandas
 
 import src.cartography.parcels
 import src.elements.parcel as pcl
+import src.cartography.centroids
 
 
 class Illustrate:
@@ -14,6 +15,9 @@ class Illustrate:
 
         self.__data = data
         self.__coarse = coarse
+
+        # Centroid
+        self.__c_latitude, self.__c_longitude = src.cartography.centroids.Centroids(blob=self.__data).__call__()
 
     def exc(self):
 
