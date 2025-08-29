@@ -1,12 +1,15 @@
-
+"""Module parcels.py"""
 import geopandas
-import pandas as pd
-
 import numpy as np
+import pandas as pd
 
 import src.elements.parcel as pcl
 
+
 class Parcels:
+    """
+    Parcels
+    """
 
     def __init__(self, data: geopandas.GeoDataFrame):
         """
