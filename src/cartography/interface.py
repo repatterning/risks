@@ -3,22 +3,17 @@ import geopandas
 
 import pandas as pd
 
+
+
 class Interface:
 
-    def __init__(self, instances: pd.DataFrame, reference: pd.DataFrame):
+    def __init__(self, instances: pd.DataFrame, boundaries: geopandas.GeoDataFrame, reference: pd.DataFrame):
 
         self.__instances = instances
+        self.__boundaries = boundaries
         self.__reference = reference
 
-    def __get_attributes(self) -> geopandas.GeoDataFrame:
 
-        attributes = geopandas.GeoDataFrame(
-            self.__reference,
-            geometry=geopandas.points_from_xy(self.__reference['longitude'], self.__reference['latitude'])
-        )
-        attributes.crs = 'epsg:4326'
-
-        return attributes
 
     def __get_data(self, points: int) -> geopandas.GeoDataFrame:
 
