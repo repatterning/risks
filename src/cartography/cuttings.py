@@ -1,8 +1,12 @@
+"""Module cuttings.py"""
 import geopandas
 import shapely
 
 
 class Cuttings:
+    """
+    Intersections of polygons
+    """
 
     def __init__(self, instances: geopandas.GeoDataFrame):
         """
