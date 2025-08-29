@@ -4,17 +4,22 @@ import shapely
 
 class Cuttings:
 
-    def __init__(self, _instances: geopandas.GeoDataFrame):
+    def __init__(self, instances: geopandas.GeoDataFrame):
         """
 
-        _instances: the geometry field encodes the points from a single/distinct parent catchment
+        instances: the geometry field of `instances` encodes the points from a single/distinct parent catchment
         """
 
-        self.__instances = _instances
+        self.__instances = instances
 
-    def inside(self, x: shapely.geometry.polygon.Polygon):
+    def inside(self, _polygon: shapely.geometry.polygon.Polygon):
+        """
 
-        # Is y, a geometry point of self.__instances, a member of polygon x?
-        outputs = self.__instances.geometry.apply(lambda y: y.within(x))
+        :param _polygon:
+        :return:
+        """
+
+        # Is y a member of polygon `_polygon`? `y` is a geometry point of self.__instances
+        outputs = self.__instances.geometry.apply(lambda y: y.within(_polygon))
 
         return sum(outputs)
