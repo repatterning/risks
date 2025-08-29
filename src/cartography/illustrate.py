@@ -75,7 +75,7 @@ class Illustrate:
             folium.GeoJson(
                 data = instances.to_crs(epsg=3857),
                 name=f'{parcel.catchment_name}',
-                marker=folium.Circle(
+                marker=folium.CircleMarker(
                     radius=5, stroke=False, fill=True, fillColor=colours(parcel.decimal), fill_opacity=0.85, weight=3),
                 tooltip=folium.GeoJsonTooltip(
                     fields=["latest", "maximum", "median", "station_name", "river_name"],
