@@ -11,7 +11,7 @@ class Parcels:
     def __init__(self, data: geopandas.GeoDataFrame):
         """
 
-        :param data:
+        :param data: The frame of metrics per gauge station.
         """
 
         self.__data = data
@@ -22,7 +22,7 @@ class Parcels:
     def __get_decimals(self, size: int):
         """
 
-        :param size:
+        :param size: The number of required random numbers
         :return:
         """
 
@@ -44,6 +44,7 @@ class Parcels:
 
         # Hence
         frame['rank'] = frame['maximum'].rank(method='first', ascending=False).astype(int)
+        frame.drop(columns='maximum', inplace=True)
         frame.sort_values(by='catchment_name', inplace=True)
         frame.reset_index(drop=True, inplace=True)
 
@@ -58,7 +59,7 @@ class Parcels:
         catchments = self.__catchments()
         catchments['decimal'] = self.__get_decimals(size=catchments.shape[0])
 
-        # An iterable for mapping
+        # An iterable for mapping by layer
         values: list[dict] = catchments.to_dict(orient='records')
         parcels = [pcl.Parcel(**value) for value in values]
 
