@@ -21,10 +21,6 @@ def main():
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
     logger.info(reference)
 
-    boundaries = src.cartography.cefas.CEFAS(
-        connector=connector, s3_parameters=s3_parameters).exc()
-    logger.info(boundaries)
-
     # instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
     #     partitions=partitions, reference=reference)
 
