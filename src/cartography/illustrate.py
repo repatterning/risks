@@ -20,8 +20,8 @@ class Illustrate:
     def __init__(self, data: geopandas.GeoDataFrame, coarse: geopandas.GeoDataFrame):
         """
 
-        :param data:
-        :param coarse:
+        :param data: The frame of metrics per gauge station.
+        :param coarse: The overarching catchments
         """
 
         self.__data = data
@@ -82,7 +82,7 @@ class Illustrate:
                 popup=folium.GeoJsonPopup(fields=["station_name", "latest", "maximum"],
                                           aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)']),
                 style_function=lambda feature: {
-                    "radius": (feature['properties']['latest'])
+                    "radius": (feature['properties']['latest'])*10
                 },
                 zoom_on_click=True,
                 show=show
