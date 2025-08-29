@@ -9,6 +9,9 @@ import src.cartography.cuttings
 
 
 class Coarse:
+    """
+    Coarse
+    """
 
     def __init__(self, reference: pd.DataFrame, fine: geopandas.GeoDataFrame):
         """
@@ -16,7 +19,7 @@ class Coarse:
         :param reference: Each instance represents a distinct gauge station, alongside its details.
         :param fine: The low level, most granular, catchment-segments fine.
         """
-        
+
         self.__reference = reference
         self.__fine = fine
 
@@ -33,13 +36,13 @@ class Coarse:
         attributes.crs = 'epsg:4326'
 
         return attributes
-    
+
     def exc(self) -> geopandas.GeoDataFrame:
         """
 
         :return:
         """
-        
+
         attributes = self.__get_attributes()
         catchments = self.__reference[['catchment_id', 'catchment_name']].drop_duplicates()
 
