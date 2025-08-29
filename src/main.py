@@ -49,7 +49,7 @@ if __name__ == '__main__':
     # Modules
     import src.assets.interface
     import src.algorithms.interface
-    import src.cartography.cefas
+    import src.cartography.fine
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
     import src.functions.cache
