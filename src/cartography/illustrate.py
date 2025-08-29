@@ -1,15 +1,14 @@
-
-import logging
+"""Module illustrate.py"""
 import os
 
 import branca.colormap
-import geopandas
 import folium
+import geopandas
 
 import config
+import src.cartography.centroids
 import src.cartography.parcels
 import src.elements.parcel as pcl
-import src.cartography.centroids
 
 
 class Illustrate:
