@@ -1,0 +1,49 @@
+import logging
+import geopandas
+import pandas as pd
+import shapely
+
+import src.cartography.cuttings
+
+class Coarse:
+
+    def __init__(self, reference: pd.DataFrame, boundaries: geopandas.GeoDataFrame):
+        
+        self.__reference = reference
+        self.__boundaries = boundaries
+
+    def __get_attributes(self) -> geopandas.GeoDataFrame:
+
+        attributes = geopandas.GeoDataFrame(
+            self.__reference,
+            geometry=geopandas.points_from_xy(self.__reference['longitude'], self.__reference['latitude'])
+        )
+        attributes.crs = 'epsg:4326'
+
+        return attributes
+    
+    def exc(self) -> geopandas.GeoDataFrame:
+        
+        attributes = self.__get_attributes()
+
+        _coarse = []
+
+        catchments = self.__reference[['catchment_id', 'catchment_name']].drop_duplicates()
+
+        for c, n in zip(catchments.catchment_id.values, catchments.catchment_name.values):
+
+            instances = attributes.copy().loc[attributes['catchment_id'] == c, :]
+
+            # Which [child] polygons are associated with the catchment are in focus?
+            identifiers = self.__boundaries.geometry.map(src.cartography.cuttings.Cuttings(instances=instances).inside)
+            applicable = self.__boundaries.copy().loc[identifiers > 0, :]
+
+            # Convert the polygons into a single polygon.
+            frame = geopandas.GeoDataFrame({'catchment_id': [c], 'catchment_name': [n]})
+            _coarse.append(frame.set_geometry([shapely.unary_union(applicable.geometry)]))
+
+        coarse: geopandas.GeoDataFrame = pd.concat(_coarse, ignore_index=True, axis=0)
+        coarse.crs = self.__boundaries.crs.srs
+        logging.info('Coördinate Reference System:\n%s', coarse.crs)
+
+        return coarse
