@@ -39,7 +39,7 @@ class Illustrate:
         """
 
         :param points: 1 -> 0.25 hours, 4 -> 1 hour, etc.
-        :param n_catchments_visible: The number of catchment data layers that are visible by default
+        :param n_catchments_visible: The number of catchment data layers that are visible by default.
         :return:
         """
 
