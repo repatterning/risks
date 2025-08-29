@@ -1,18 +1,30 @@
+"""Module coarse.py"""
 import logging
+
 import geopandas
 import pandas as pd
 import shapely
 
 import src.cartography.cuttings
 
+
 class Coarse:
 
     def __init__(self, reference: pd.DataFrame, boundaries: geopandas.GeoDataFrame):
+        """
+
+        :param reference:
+        :param boundaries:
+        """
         
         self.__reference = reference
         self.__boundaries = boundaries
 
     def __get_attributes(self) -> geopandas.GeoDataFrame:
+        """
+
+        :return:
+        """
 
         attributes = geopandas.GeoDataFrame(
             self.__reference,
@@ -23,13 +35,15 @@ class Coarse:
         return attributes
     
     def exc(self) -> geopandas.GeoDataFrame:
+        """
+
+        :return:
+        """
         
         attributes = self.__get_attributes()
-
-        _coarse = []
-
         catchments = self.__reference[['catchment_id', 'catchment_name']].drop_duplicates()
 
+        _coarse = []
         for c, n in zip(catchments.catchment_id.values, catchments.catchment_name.values):
 
             instances = attributes.copy().loc[attributes['catchment_id'] == c, :]
