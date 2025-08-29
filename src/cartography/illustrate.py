@@ -43,7 +43,8 @@ class Illustrate:
         :return:
         """
 
-        colours: branca.colormap.StepColormap = branca.colormap.linear.YlOrBr_09.to_step(len(self.__parcels))
+        colours: branca.colormap.StepColormap = branca.colormap.LinearColormap(
+            ['orange', 'brown', 'black']).to_step(len(self.__parcels))
 
         # Base Layer
         segments = folium.Map(location=[self.__c_latitude, self.__c_longitude], tiles='OpenStreetMap', zoom_start=7)
@@ -76,8 +77,9 @@ class Illustrate:
                 name=f'{parcel.catchment_name}',
                 marker=folium.Circle(
                     radius=5, stroke=False, fill=True, fillColor=colours(parcel.decimal), fill_opacity=0.85, weight=3),
-                tooltip=folium.GeoJsonTooltip(fields=["latest", "maximum", "median", "station_name", "river_name"],
-                                              aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station Name', 'River Name']),
+                tooltip=folium.GeoJsonTooltip(
+                    fields=["latest", "maximum", "median", "station_name", "river_name"],
+                    aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station Name', 'River Name']),
                 popup=folium.GeoJsonPopup(fields=["station_name", "latest", "maximum", "median"],
                                           aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)']),
                 style_function=lambda feature: {
