@@ -14,6 +14,10 @@ Develop<br>
 
 Determines rates of change of river levels, vis-à-vis a gauge point.
 
+- [ ] [Care Homes](https://data.spatialhub.scot/dataset/care_homes_for_older_people-is)
+- [ ] Schools
+- [ ] [Stations](https://network-maps.ssen.co.uk)
+
 <br>
 <br>
 
