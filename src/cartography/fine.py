@@ -1,4 +1,4 @@
-"""Module cefas.py"""
+"""Module fine.py"""
 import io
 
 import boto3
@@ -8,12 +8,10 @@ import src.elements.s3_parameters as s3p
 import src.s3.unload
 
 
-class CEFAS:
+class Fine:
     """
-    Centre for Environment, Fisheries and Aquaculture Science (CEFAS)
-
-    This class reads the river level catchment boundaries of the Scottish Environment Protection Agency; provided
-    by CEFAS.
+    This class reads the fine-grained river level catchment boundaries of the Scottish Environment Protection Agency; provided
+    by Centre for Environment, Fisheries and Aquaculture Science (CEFAS).
     """
 
     def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters):
