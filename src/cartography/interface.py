@@ -1,18 +1,32 @@
 import logging
+import boto3
 
 import geopandas
 import pandas as pd
 
 import src.cartography.coarse
+import src.cartography.cefas
+import src.elements.s3_parameters as s3p
 
 
 class Interface:
 
-    def __init__(self, instances: pd.DataFrame, boundaries: geopandas.GeoDataFrame, reference: pd.DataFrame):
+    def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters, instances: pd.DataFrame, reference: pd.DataFrame):
+
+        self.__connector = connector
+        self.__s3_parameters = s3_parameters
 
         self.__instances = instances
-        self.__boundaries = boundaries
         self.__reference = reference
+
+    def __get_coarse_boundaries(self) -> geopandas.GeoDataFrame:
+
+        boundaries = src.cartography.cefas.CEFAS(
+            connector=self.__connector, s3_parameters=self.__s3_parameters).exc()
+
+        return src.cartography.coarse.Coarse(
+            reference=self.__reference, boundaries=boundaries).exc()
+
 
     def __get_data(self, points: int) -> geopandas.GeoDataFrame:
 
@@ -33,8 +47,7 @@ class Interface:
         """
 
         points_ = self.__instances['points'].unique()
-        coarse = src.cartography.coarse.Coarse(reference=self.__reference, boundaries=self.__boundaries).exc()
-        logging.info(coarse)
+
 
         for points in points_:
 
