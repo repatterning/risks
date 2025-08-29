@@ -15,21 +15,26 @@ def main():
 
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info('Starting: %s', datetime.datetime.now().isoformat(timespec='microseconds'))
+    logger.info(arguments)
 
     # The time series partitions, the reference sheet of gauges
     partitions, listings, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
     logger.info(reference)
 
-    # instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
-    #     partitions=partitions, reference=reference)
+    instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
+        partitions=partitions, reference=reference)
 
-    # src.menu.interface.Interface().exc(
-    #     points_=instances['points'].unique(), frequency=arguments.get('frequency'))
+    src.cartography.interface.Interface(
+        connector=connector, s3_parameters=s3_parameters, instances=instances, reference=reference).exc(
+        n_catchments_visible=arguments.get('rates').get('n_catchments_visible'))
+
+    src.menu.interface.Interface().exc(
+        points_=instances['points'].unique(), frequency=arguments.get('frequency'))
 
     # Transferring calculations to an Amazon S3 (Simple Storage Service) bucket
-    # src.transfer.interface.Interface(
-    #     connector=connector, service=service, s3_parameters=s3_parameters).exc()
+    src.transfer.interface.Interface(
+        connector=connector, service=service, s3_parameters=s3_parameters).exc()
 
     # Cache
     src.functions.cache.Cache().exc()
@@ -49,7 +54,7 @@ if __name__ == '__main__':
     # Modules
     import src.assets.interface
     import src.algorithms.interface
-    import src.cartography.fine
+    import src.cartography.interface
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
     import src.functions.cache
