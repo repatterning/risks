@@ -42,9 +42,10 @@ class Interface:
 
         return data
 
-    def exc(self, ):
+    def exc(self, n_catchments_visible: int):
         """
 
+        :param n_catchments_visible:
         :return:
         """
 
@@ -52,4 +53,4 @@ class Interface:
 
         for points in self.__instances['points'].unique():
             data = self.__get_data(points=points)
-            src.cartography.illustrate.Illustrate(data=data, coarse=coarse).exc()
+            src.cartography.illustrate.Illustrate(data=data, coarse=coarse).exc(points=points, n_catchments_visible=n_catchments_visible)
