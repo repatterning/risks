@@ -77,12 +77,12 @@ class Illustrate:
                 name=f'{parcel.catchment_name}',
                 marker=folium.Circle(
                     radius=5, stroke=False, fill=True, fillColor=colours(parcel.decimal), fill_opacity=0.85, weight=3),
-                tooltip=folium.GeoJsonTooltip(fields=["latest", "maximum", "station_name", "river_name"],
-                                              aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'Station Name', 'River Name']),
-                popup=folium.GeoJsonPopup(fields=["station_name", "latest", "maximum"],
-                                          aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)']),
+                tooltip=folium.GeoJsonTooltip(fields=["latest", "maximum", "median", "station_name", "river_name"],
+                                              aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station Name', 'River Name']),
+                popup=folium.GeoJsonPopup(fields=["station_name", "latest", "maximum", "median"],
+                                          aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)']),
                 style_function=lambda feature: {
-                    "radius": (feature['properties']['latest'])*10
+                    "radius": (feature['properties']['latest'])*35
                 },
                 zoom_on_click=True,
                 show=show
@@ -90,5 +90,6 @@ class Illustrate:
 
         folium.LayerControl().add_to(segments)
 
+        # Persist
         outfile = os.path.join(self.__configurations.maps_, f'{points:04d}.html')
         segments.save(outfile=outfile)
