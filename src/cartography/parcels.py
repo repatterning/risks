@@ -39,14 +39,13 @@ class Parcels:
         frame = self.__data[['catchment_id', 'catchment_name', 'latest']].groupby(
             by=['catchment_id', 'catchment_name']).agg(maximum=('latest', 'max'))
 
-        # The map will display the top ..., by default
-        frame.sort_values(by='maximum', ascending=False, inplace=True)
-
         # Convert 'catchment_id' & 'catchment_name' to fields; currently indices.
         frame.reset_index(drop=False, inplace=True)
 
-        # Create an index field for the dictionary
-        frame.reset_index(drop=False, inplace=True)
+        # Hence
+        frame['rank'] = frame['maximum'].rank(method='first', ascending=False).astype(int)
+        frame.sort_values(by='catchment_name', inplace=True)
+        frame.reset_index(drop=True, inplace=True)
 
         return frame
 
@@ -59,7 +58,7 @@ class Parcels:
         catchments = self.__catchments()
         catchments['decimal'] = self.__get_decimals(size=catchments.shape[0])
 
-        # An iterble for mapping
+        # An iterable for mapping
         values: list[dict] = catchments.to_dict(orient='records')
         parcels = [pcl.Parcel(**value) for value in values]
 
