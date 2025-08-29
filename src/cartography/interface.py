@@ -1,8 +1,9 @@
+import logging
 
 import geopandas
-
 import pandas as pd
 
+import src.cartography.coarse
 
 
 class Interface:
@@ -12,8 +13,6 @@ class Interface:
         self.__instances = instances
         self.__boundaries = boundaries
         self.__reference = reference
-
-
 
     def __get_data(self, points: int) -> geopandas.GeoDataFrame:
 
@@ -34,6 +33,8 @@ class Interface:
         """
 
         points_ = self.__instances['points'].unique()
+        coarse = src.cartography.coarse.Coarse(reference=self.__reference, boundaries=self.__boundaries).exc()
+        logging.info(coarse)
 
         for points in points_:
 
