@@ -59,7 +59,7 @@ class Illustrate:
             tooltip=folium.GeoJsonTooltip(fields=["catchment_name"], aliases=["Catchment Name"]),
             control=False,
             highlight_function=lambda feature: {
-                "fillColor": "#6b8e23", "fillOpacity": 0.2
+                "fillColor": "#6b8e23", "fillOpacity": 0.1
             }
         ).add_to(segments)
 
@@ -83,7 +83,7 @@ class Illustrate:
                 popup=folium.GeoJsonPopup(fields=["station_name", "latest", "maximum", "median"],
                                           aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)']),
                 style_function=lambda feature: {
-                    "radius": (feature['properties']['latest'])*650
+                    "radius": (feature['properties']['latest'])*1000
                 },
                 zoom_on_click=True,
                 show=show
