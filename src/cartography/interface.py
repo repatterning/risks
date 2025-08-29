@@ -5,8 +5,10 @@ import geopandas
 import pandas as pd
 
 import src.cartography.coarse
-import src.cartography.cefas
+import src.cartography.fine
 import src.elements.s3_parameters as s3p
+
+import src.cartography.illustrate
 
 
 class Interface:
@@ -21,11 +23,11 @@ class Interface:
 
     def __get_coarse_boundaries(self) -> geopandas.GeoDataFrame:
 
-        boundaries = src.cartography.cefas.CEFAS(
+        fine = src.cartography.fine.Fine(
             connector=self.__connector, s3_parameters=self.__s3_parameters).exc()
 
         return src.cartography.coarse.Coarse(
-            reference=self.__reference, boundaries=boundaries).exc()
+            reference=self.__reference, fine=fine).exc()
 
 
     def __get_data(self, points: int) -> geopandas.GeoDataFrame:
@@ -49,6 +51,5 @@ class Interface:
         coarse = self.__get_coarse_boundaries()
 
         for points in self.__instances['points'].unique():
-
             data = self.__get_data(points=points)
-
+            src.cartography.illustrate.Illustrate(data=data, coarse=coarse).exc()
