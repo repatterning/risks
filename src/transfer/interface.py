@@ -42,12 +42,13 @@ class Interface:
         :param frame:
         :return:
         """
-        __points = self.__metadata.exc(name='points.json')
-        __menu = self.__metadata.exc(name='menu.json')
+
+        dictionary = {'points': self.__metadata.exc(name='points.json'),
+                      'menu': self.__metadata.exc(name='menu.json'),
+                      'maps': self.__metadata.exc(name='maps.json')}
 
         frame = frame.assign(
-            metadata = frame['section'].apply(
-                lambda x: __points if x == 'points' else __menu))
+            metadata = frame['section'].map(dictionary))
 
         return frame
 
@@ -60,7 +61,7 @@ class Interface:
         # The strings for transferring data to Amazon S3 (Simple Storage Service)
         strings: pd.DataFrame = self.__dictionary.exc(
             path=self.__configurations.risks_,
-            extension='json', prefix=self.__configurations.prefix + '/')
+            extension='*', prefix=self.__configurations.prefix + '/')
 
         # Adding metadata details per instance
         strings = self.__get_metadata(frame=strings.copy())
