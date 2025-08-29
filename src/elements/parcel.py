@@ -8,8 +8,9 @@ class Parcel(typing.NamedTuple):
 
     Attributes<br>
     ----------<br>
-    <b>index</b>: int<br>
-        An iterable index.<br><br>
+    <b>rank</b>: int<br>
+        A catchment's rank in relation its maximum millimetres/hour value; the catchment that has
+        the highest maximum value has rank 0 or 1.<br><br>
     <b>catchment_id</b>: int<br>
         The identification code of a catchment area.<br><br>
     <b>catchment_name</b>: str<br>
@@ -18,7 +19,7 @@ class Parcel(typing.NamedTuple):
         A decimal number for colour coding.<br><br>
     """
 
-    index: int
+    rank: int
     catchment_id: int
     catchment_name: str
     decimal: float
