@@ -1,7 +1,7 @@
-import logging
-import geopandas
-import boto3
 import io
+
+import boto3
+import geopandas
 
 import src.elements.s3_parameters as s3p
 import src.s3.unload
@@ -10,6 +10,11 @@ import src.s3.unload
 class CEFAS:
 
     def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters):
+        """
+
+        :param connector:
+        :param s3_parameters:
+        """
 
         # An instance for S3 interactions
         self.__s3_client: boto3.session.Session.client = connector.client(
@@ -17,11 +22,13 @@ class CEFAS:
 
         self.__s3_parameters = s3_parameters
 
-    def exc(self):
+    def exc(self) -> geopandas.GeoDataFrame:
+        """
+
+        :return:
+        """
 
         buffer = src.s3.unload.Unload(s3_client=self.__s3_client).exc(
             bucket_name=self.__s3_parameters.internal, key_name='cartography/SEPA.geojson')
 
-        testing = geopandas.read_file(io.StringIO(buffer))
-
-        logging.info(testing)
+        return geopandas.read_file(io.StringIO(buffer))
