@@ -19,16 +19,21 @@ def main():
     # The time series partitions, the reference sheet of gauges
     partitions, listings, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
+    logger.info(reference)
 
-    instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
-        partitions=partitions, reference=reference)
+    boundaries = src.cartography.cefas.CEFAS(
+        connector=connector, s3_parameters=s3_parameters).exc()
+    logger.info(boundaries)
 
-    src.menu.interface.Interface().exc(
-        points_=instances['points'].unique(), frequency=arguments.get('frequency'))
+    # instances = src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
+    #     partitions=partitions, reference=reference)
+
+    # src.menu.interface.Interface().exc(
+    #     points_=instances['points'].unique(), frequency=arguments.get('frequency'))
 
     # Transferring calculations to an Amazon S3 (Simple Storage Service) bucket
-    src.transfer.interface.Interface(
-        connector=connector, service=service, s3_parameters=s3_parameters).exc()
+    # src.transfer.interface.Interface(
+    #     connector=connector, service=service, s3_parameters=s3_parameters).exc()
 
     # Cache
     src.functions.cache.Cache().exc()
@@ -48,12 +53,13 @@ if __name__ == '__main__':
     # Modules
     import src.assets.interface
     import src.algorithms.interface
+    import src.cartography.cefas
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
     import src.functions.cache
+    import src.menu.interface
     import src.preface.interface
     import src.transfer.interface
-    import src.menu.interface
 
     connector: boto3.session.Session
     s3_parameters: s3p.S3Parameters
