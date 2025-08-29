@@ -54,12 +54,12 @@ class Illustrate:
             data=self.__coarse.to_crs(epsg=3857),
             name='Boundaries',
             style_function=lambda feature: {
-                "fillColor": "#ffffff", "color": "black", "opacity": 0.35, "weight": 0.75, "dashArray": "5, 2"
+                "fillColor": "#ffffff", "color": "black", "opacity": 0.35, "weight": 0.85, "dashArray": "5, 2"
             },
             tooltip=folium.GeoJsonTooltip(fields=["catchment_name"], aliases=["Catchment Name"]),
             control=False,
             highlight_function=lambda feature: {
-                "fillColor": "#6b8e23", "opacity": 0.05
+                "fillColor": "#6b8e23", "fillOpacity": 0.2
             }
         ).add_to(segments)
 
@@ -83,7 +83,7 @@ class Illustrate:
                 popup=folium.GeoJsonPopup(fields=["station_name", "latest", "maximum", "median"],
                                           aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)']),
                 style_function=lambda feature: {
-                    "radius": (feature['properties']['latest'])*125
+                    "radius": (feature['properties']['latest'])*650
                 },
                 zoom_on_click=True,
                 show=show
