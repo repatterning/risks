@@ -46,7 +46,7 @@ class Illustrate:
 
         # Colours
         colours: branca.colormap.StepColormap = branca.colormap.LinearColormap(
-            ['orange', 'brown', 'black']).to_step(len(self.__parcels))
+            ['black', 'brown', 'orange']).to_step(len(self.__parcels))
 
         # Custom drawing functions
         custom = src.cartography.custom.Custom()
