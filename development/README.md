@@ -12,7 +12,7 @@ For this Python project/template, the remote development environment requires
 An image is built via the command
 
 ```shell
-docker build . --file .devcontainer/Dockerfile -t points
+docker build . --file .devcontainer/Dockerfile -t spatial
 ```
 
 On success, the output of
@@ -27,17 +27,17 @@ should include
 
 | repository | tag    | image id | created  | size     |
 |:-----------|:-------|:---------|:---------|:---------|
-| points     | latest | $\ldots$ | $\ldots$ | $\ldots$ |
+| spatial    | latest | $\ldots$ | $\ldots$ | $\ldots$ |
 
 
 <br>
 
-Subsequently, run an instance of the image `points` via:
+Subsequently, run an instance of the image `spatial` via:
 
 
 ```shell
 docker run --rm -i -t -p 8050:8050 -w /app --mount
-    type=bind,src="$(pwd)",target=/app points
+    type=bind,src="$(pwd)",target=/app spatial
 ```
 
 or
@@ -45,7 +45,7 @@ or
 ```shell
 docker run --rm -i -t -p 8050:8050 -w /app --mount
     type=bind,src="$(pwd)",target=/app 
-      -v ~/.aws:/root/.aws points
+      -v ~/.aws:/root/.aws spatial
 ```
 
 <br>
@@ -62,7 +62,7 @@ i.e., `-w`, must be inline with this project's top directory.  Additionally, vis
 
 <br>
 
-The part `-v ~/.aws:/root/.aws` ascertains Amazon Web Services interactions via containers. Get the name of a running instance of ``points`` via:
+The part `-v ~/.aws:/root/.aws` ascertains Amazon Web Services interactions via containers. Get the name of a running instance of ``spatial`` via:
 
 ```shell
 docker ps --all
