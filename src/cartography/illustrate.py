@@ -36,6 +36,8 @@ class Illustrate:
 
     def exc(self, points: int, n_catchments_visible: int):
         """
+        popup=folium.GeoJsonPopup(fields=['station_name', 'latest', 'maximum', 'median'],
+                                  aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)'])
 
         :param points: 1 -> 0.25 hours, 4 -> 1 hour, etc.
         :param n_catchments_visible: The number of catchment data layers that are visible by default.
@@ -81,10 +83,8 @@ class Illustrate:
                 marker=folium.CircleMarker(
                     radius=5, stroke=False, fill=True, fillColor=colours(parcel.decimal), fill_opacity=0.65),
                 tooltip=folium.GeoJsonTooltip(
-                    fields=["latest", "maximum", "median", "station_name", "river_name"],
-                    aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station Name', 'River Name']),
-                popup=folium.GeoJsonPopup(fields=["station_name", "latest", "maximum", "median"],
-                                          aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)']),
+                    fields=['latest', 'maximum', 'median', 'station_name', 'river_name', 'catchment_name'],
+                    aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station', 'River/Water', 'Catchment']),
                 style_function=lambda feature: {
                     "fillOpacity": custom.f_opacity(feature['properties']['latest']),
                     "radius": custom.f_radius(feature['properties']['latest'])
