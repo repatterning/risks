@@ -31,7 +31,7 @@ class Parcels:
 
         rng = np.random.default_rng(seed=self.__seed)
 
-        return rng.uniform(low=0.35, high=0.99, size=size)
+        return rng.uniform(low=0.05, high=0.80, size=size)
 
     def __catchments(self) -> pd.DataFrame:
         """

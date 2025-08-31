@@ -7,6 +7,7 @@ import geopandas
 
 import config
 import src.cartography.centroids
+import src.cartography.custom
 import src.cartography.parcels
 import src.elements.parcel as pcl
 
@@ -29,22 +30,26 @@ class Illustrate:
         # Configurations
         self.__configurations = config.Config()
 
-        # Centroid
+        # Centroid, Parcels
         self.__c_latitude, self.__c_longitude = src.cartography.centroids.Centroids(blob=self.__data).__call__()
-
-        # Parcels
         self.__parcels: list[pcl.Parcel] = src.cartography.parcels.Parcels(data=self.__data).exc()
 
     def exc(self, points: int, n_catchments_visible: int):
         """
+        popup=folium.GeoJsonPopup(fields=['station_name', 'latest', 'maximum', 'median'],
+                                  aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)'])
 
         :param points: 1 -> 0.25 hours, 4 -> 1 hour, etc.
         :param n_catchments_visible: The number of catchment data layers that are visible by default.
         :return:
         """
 
+        # Colours
         colours: branca.colormap.StepColormap = branca.colormap.LinearColormap(
-            ['orange', 'brown', 'black']).to_step(len(self.__parcels))
+            ['black', 'brown', 'orange']).to_step(len(self.__parcels))
+
+        # Custom drawing functions
+        custom = src.cartography.custom.Custom()
 
         # Base Layer
         segments = folium.Map(location=[self.__c_latitude, self.__c_longitude], tiles='OpenStreetMap', zoom_start=7)
@@ -76,14 +81,13 @@ class Illustrate:
                 data = instances.to_crs(epsg=3857),
                 name=f'{parcel.catchment_name}',
                 marker=folium.CircleMarker(
-                    radius=5, stroke=False, fill=True, fillColor=colours(parcel.decimal), fill_opacity=0.85, weight=3),
+                    radius=22.5, stroke=False, fill=True, fillColor=colours(parcel.decimal), fill_opacity=0.65),
                 tooltip=folium.GeoJsonTooltip(
-                    fields=["latest", "maximum", "median", "station_name", "river_name"],
-                    aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station Name', 'River Name']),
-                popup=folium.GeoJsonPopup(fields=["station_name", "latest", "maximum", "median"],
-                                          aliases=['Station Name', 'latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)']),
+                    fields=['latest', 'maximum', 'median', 'station_name', 'river_name', 'catchment_name'],
+                    aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station', 'River/Water', 'Catchment']),
                 style_function=lambda feature: {
-                    "radius": (feature['properties']['latest'])*100
+                    "fillOpacity": custom.f_opacity(feature['properties']['latest']),
+                    "radius": custom.f_radius(feature['properties']['latest'])
                 },
                 zoom_on_click=True,
                 show=show
