@@ -11,7 +11,7 @@ class Custom:
         pass
 
     @staticmethod
-    def f_radius(value: float):
+    def f_radius(value: float) -> float:
         """
 
         arctan: minimum + (maximum - minimum)*2*np.arctan(0.5*value*np.pi)/np.pi
@@ -23,10 +23,11 @@ class Custom:
 
         minimum = 1250
         maximum = 2000
-        minimum + (maximum - minimum)*value/(1 + np.abs(value))
+
+        return minimum + (maximum - minimum)*value/(1 + np.abs(value))
 
     @staticmethod
-    def f_opacity(value: float):
+    def f_opacity(value: float) -> float:
         """
 
         :param value:
@@ -36,4 +37,4 @@ class Custom:
         minimum = 0.25
         maximum = 0.65
 
-        minimum + (maximum - minimum)*value/np.sqrt(1 + np.power(value, 2))
+        return minimum + (maximum - minimum)*value/np.sqrt(1 + np.power(value, 2))
