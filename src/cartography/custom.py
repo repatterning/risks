@@ -21,8 +21,8 @@ class Custom:
         :return:
         """
 
-        minimum = 950
-        maximum = 2500
+        minimum = 1250
+        maximum = 5000
 
         return minimum + (maximum - minimum)*value/(1 + np.abs(value))
 
@@ -35,6 +35,6 @@ class Custom:
         """
 
         minimum = 0.25
-        maximum = 0.90
+        maximum = 0.85
 
         return minimum + (maximum - minimum)*value/np.sqrt(1 + np.power(value, 2))
