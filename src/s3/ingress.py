@@ -1,8 +1,9 @@
 """Module ingress.py"""
-
+import os
 import botocore.exceptions
 import dask
 import pandas as pd
+import pathlib
 
 import src.elements.service as sr
 
@@ -45,9 +46,15 @@ class Ingress:
         :return:
         """
 
+        extension = pathlib.Path(file).suffix
+        extra_arguments = {'Metadata': metadata,
+                           'Tagging': tagging,
+                           'ContentDisposition': f'inline; filename="{os.path.basename(file)}"'} \
+            if extension == '.html' else {'Metadata': metadata, 'Tagging': tagging}
+
         try:
             self.__s3_client.upload_file(Filename=file, Bucket=self.__bucket_name, Key=key,
-                                         ExtraArgs={'Metadata': metadata, 'Tagging': tagging})
+                                         ExtraArgs=extra_arguments)
             return f'Uploading {key}'
         except botocore.exceptions.ClientError as err:
             raise err from err
