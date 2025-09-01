@@ -1,9 +1,10 @@
 """Module ingress.py"""
 import os
+import pathlib
+
 import botocore.exceptions
 import dask
 import pandas as pd
-import pathlib
 
 import src.elements.service as sr
 
