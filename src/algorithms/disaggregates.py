@@ -43,11 +43,17 @@ class Disaggregates:
 
     def __call__(self) -> list[dict]:
         """
+        self.__frame['catchment_id'].unique()
 
         :return:
         """
 
-        codes = self.__frame['catchment_id'].unique()
+        # Will this ascertain an ordered legend?
+        baseline = self.__frame[['catchment_id', 'catchment_name']].drop_duplicates()
+        baseline.sort_values(by='catchment_name', ascending=True, inplace=True)
+
+        # Therefore ...
+        codes = baseline['catchment_id'].to_numpy()
 
         computation = [self.__get_disaggregate(catchment_id=code) for code in codes]
 
