@@ -61,6 +61,9 @@ class Interface:
         )
         data.crs = 'epsg:4326'
 
+        for field in ['maximum', 'minimum', 'latest', 'median']:
+            data[field] = data[field].round(decimals=4)
+
         return data
 
     def exc(self, n_catchments_visible: int):
