@@ -49,6 +49,7 @@ class Ingress:
         extension = pathlib.Path(file).suffix
         extra_arguments = {'Metadata': metadata,
                            'Tagging': tagging,
+                           'ContentType': 'text/html; charset=utf-8',
                            'ContentDisposition': f'inline; filename="{os.path.basename(file)}"'} \
             if extension == '.html' else {'Metadata': metadata, 'Tagging': tagging}
 
