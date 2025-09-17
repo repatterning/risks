@@ -42,8 +42,10 @@ class Interface:
         fine = src.cartography.fine.Fine(
             connector=self.__connector, s3_parameters=self.__s3_parameters).exc()
 
-        return src.cartography.coarse.Coarse(
+        coarse = src.cartography.coarse.Coarse(
             reference=self.__reference, fine=fine).exc()
+
+        return coarse
 
 
     def __get_data(self, points: int) -> geopandas.GeoDataFrame:
