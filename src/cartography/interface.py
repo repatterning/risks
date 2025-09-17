@@ -16,7 +16,7 @@ class Interface:
     """
 
     def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters,
-                 instances: pd.DataFrame, reference: pd.DataFrame):
+                 instances: pd.DataFrame):
         """
 
         :param connector: A boto3 session instance, it retrieves the developer's <default> Amazon
@@ -25,14 +25,12 @@ class Interface:
                               name, buckets, etc.
         :param instances: A frame of metrics per gauge instance, and with respect to time; in the
                           latter case, 1 time point (0.25 hours), 4 time points (1 hour), etc.
-        :param reference: An inventory of gauge stations
         """
 
         self.__connector = connector
         self.__s3_parameters = s3_parameters
 
         self.__instances = instances
-        self.__reference = reference
 
     def __get_coarse_boundaries(self) -> geopandas.GeoDataFrame:
         """
