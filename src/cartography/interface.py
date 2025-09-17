@@ -1,12 +1,13 @@
 """Module interface.py"""
+import io
+
 import boto3
 import geopandas
 import pandas as pd
 
-import src.cartography.coarse
-import src.cartography.fine
 import src.cartography.illustrate
 import src.elements.s3_parameters as s3p
+import src.s3.unload
 
 
 class Interface:
@@ -35,18 +36,21 @@ class Interface:
 
     def __get_coarse_boundaries(self) -> geopandas.GeoDataFrame:
         """
-
-        :return:
-        """
-
         fine = src.cartography.fine.Fine(
             connector=self.__connector, s3_parameters=self.__s3_parameters).exc()
 
         coarse = src.cartography.coarse.Coarse(
             reference=self.__reference, fine=fine).exc()
 
-        return coarse
+        :return:
+        """
 
+        __s3_client: boto3.session.Session.client = self.__connector.client(service_name='s3')
+        buffer = src.s3.unload.Unload(s3_client=__s3_client).exc(
+            bucket_name=self.__s3_parameters.internal, key_name='cartography/coarse.geojson')
+        coarse = geopandas.read_file(io.StringIO(buffer))
+
+        return coarse
 
     def __get_data(self, points: int) -> geopandas.GeoDataFrame:
         """
