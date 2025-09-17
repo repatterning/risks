@@ -1,12 +1,13 @@
 """Module interface.py"""
+import io
+
 import boto3
 import geopandas
 import pandas as pd
 
-import src.cartography.coarse
-import src.cartography.fine
 import src.cartography.illustrate
 import src.elements.s3_parameters as s3p
+import src.s3.unload
 
 
 class Interface:
@@ -15,7 +16,7 @@ class Interface:
     """
 
     def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters,
-                 instances: pd.DataFrame, reference: pd.DataFrame):
+                 instances: pd.DataFrame):
         """
 
         :param connector: A boto3 session instance, it retrieves the developer's <default> Amazon
@@ -24,27 +25,30 @@ class Interface:
                               name, buckets, etc.
         :param instances: A frame of metrics per gauge instance, and with respect to time; in the
                           latter case, 1 time point (0.25 hours), 4 time points (1 hour), etc.
-        :param reference: An inventory of gauge stations
         """
 
         self.__connector = connector
         self.__s3_parameters = s3_parameters
 
         self.__instances = instances
-        self.__reference = reference
 
     def __get_coarse_boundaries(self) -> geopandas.GeoDataFrame:
         """
+        fine = src.cartography.fine.Fine(
+            connector=self.__connector, s3_parameters=self.__s3_parameters).exc()
+
+        coarse = src.cartography.coarse.Coarse(
+            reference=self.__reference, fine=fine).exc()
 
         :return:
         """
 
-        fine = src.cartography.fine.Fine(
-            connector=self.__connector, s3_parameters=self.__s3_parameters).exc()
+        __s3_client: boto3.session.Session.client = self.__connector.client(service_name='s3')
+        buffer = src.s3.unload.Unload(s3_client=__s3_client).exc(
+            bucket_name=self.__s3_parameters.internal, key_name='cartography/coarse.geojson')
+        coarse = geopandas.read_file(io.StringIO(buffer))
 
-        return src.cartography.coarse.Coarse(
-            reference=self.__reference, fine=fine).exc()
-
+        return coarse
 
     def __get_data(self, points: int) -> geopandas.GeoDataFrame:
         """
