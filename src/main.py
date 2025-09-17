@@ -26,7 +26,7 @@ def main():
         partitions=partitions, reference=reference)
 
     src.cartography.interface.Interface(
-        connector=connector, s3_parameters=s3_parameters, instances=instances, reference=reference).exc(
+        connector=connector, s3_parameters=s3_parameters, instances=instances).exc(
         n_catchments_visible=arguments.get('rates').get('n_catchments_visible'))
 
     src.menu.interface.Interface().exc(
