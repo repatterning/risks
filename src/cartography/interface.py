@@ -34,11 +34,6 @@ class Interface:
 
     def __get_coarse_boundaries(self) -> geopandas.GeoDataFrame:
         """
-        fine = src.cartography.fine.Fine(
-            connector=self.__connector, s3_parameters=self.__s3_parameters).exc()
-
-        coarse = src.cartography.coarse.Coarse(
-            reference=self.__reference, fine=fine).exc()
 
         :return:
         """
