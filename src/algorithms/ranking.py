@@ -8,7 +8,7 @@ class Ranking:
     def __init__(self):
         pass
 
-    def __calculate(self, data: pd.DataFrame) -> pd.DataFrame:
+    def __rankings(self, data: pd.DataFrame) -> pd.DataFrame:
         """
 
         :return:
@@ -43,6 +43,6 @@ class Ranking:
 
         for points in __points:
             data = instances.copy().loc[instances['points'] == points, :]
-            logging.info(data)
-
-            self.__calculate(data=data)
+            rankings = self.__rankings(data=data)
+            frame = data.merge(rankings, how='left', on=['catchment_id'])
+            logging.info(frame)
