@@ -79,7 +79,7 @@ class Valuations:
 
         return aggregates
 
-    def __evaluate(self, i: int, j: float):
+    def __metrics(self, i: int, j: float):
         """
 
         :param i:
@@ -114,7 +114,7 @@ class Valuations:
 
         computations = []
         for i, j in zip(self.__points, self.__tau):
-            computations.append(self.__evaluate(i=i, j=j))
+            computations.append(self.__metrics(i=i, j=j))
         metrics = pd.concat(computations, axis=0)
 
         return metrics
