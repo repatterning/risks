@@ -1,5 +1,4 @@
 """Module ranking.py"""
-import logging
 
 import pandas as pd
 
@@ -32,7 +31,7 @@ class Ranking:
 
         return frame
 
-    def exc(self, instances: pd.DataFrame):
+    def exc(self, instances: pd.DataFrame) -> pd.DataFrame:
         """
 
         :param instances:
