@@ -1,4 +1,5 @@
 """Module valuations.py"""
+import logging
 import numpy as np
 import pandas as pd
 
@@ -11,91 +12,114 @@ class Valuations:
     Metrics
     """
 
-    def __init__(self, arguments: dict):
+    def __init__(self, data: pd.DataFrame, partition: pr.Partitions, arguments: dict):
         """
 
+        :param data: Consisting of fields (a) timestamp, (b) measure
+        :param partition: Refer to src.elements.partitions.py
         :param arguments:
         """
 
-        self.__arguments = arguments
+        self.__data = data.copy()
+        self.__data.sort_values(by='timestamp', ascending=True, inplace=True)
+        self.__partition = partition
 
         # time intervals (hours), and the corresponding number of points that span each time interval
-        self.__tau: np.ndarray = np.array(self.__arguments.get('tau'), dtype=float)
-        self.__points: np.ndarray = (self.__tau / self.__arguments.get('frequency')).astype(int)
+        self.__tau: np.ndarray = np.array(arguments.get('tau'), dtype=float)
+        self.__points: np.ndarray = (self.__tau / arguments.get('frequency')).astype(int)
 
-    def __rates(self, frame: pd.DataFrame):
+    def __rates(self, i: int, j: float):
         """
 
-        :param frame:
+        :param i:
+        :param j:
         :return:
         """
 
         # differences
-        differences_ = [frame.copy()['measure'].diff(int(i)).to_frame(name=i) for i in self.__points]
-        differences = pd.concat(differences_, axis=1, ignore_index=False)
+        differences: np.ndarray = self.__data.copy()['measure'].diff(int(i)).values # .to_frame(name=i)
 
         # 1000 * (delta measure) / (delta time); wherein 1000 converts metres to millimetres
-        rates = 1000 * np.true_divide(differences.to_numpy(), self.__tau)
+        rates: np.ndarray = 1000 * np.true_divide(differences, j)
 
         return rates
 
-    def __weights(self, frame: pd.DataFrame):
+    def __weights(self, i: int):
         """
 
-        :param frame:
+        :param i:
         :return:
             A numpy array of fractional river-level-percentage-change, with respect to different time spans
         """
 
         # (delta measure) / (original measure)
-        weights_ = [frame.copy()['measure'].pct_change(int(i)).to_frame(name=i) for i in self.__points]
-        weights = pd.concat(weights_, axis=1, ignore_index=False)
+        weights: np.ndarray = self.__data.copy()['measure'].pct_change(int(i)).values #.to_frame(name=i)
 
-        return weights.to_numpy()
+        return weights # .to_numpy()
 
-    def __get_metrics(self, gamma: pd.DataFrame) -> pd.DataFrame:
+    @staticmethod
+    def __get_metrics(frame: pd.DataFrame) -> pd.DataFrame:
         """
 
-        :param gamma: weighted rates of change
+        :param frame:
         :return:
         """
 
-        states = gamma.copy()
+        _s_max = frame['sign'].values[frame['metric'].idxmax()]
+        _s_min = frame['sign'].values[frame['metric'].idxmin()]
+        values = frame['sign'].values * frame['metric'].values
+        logging.info('%s, %s, %s', type(_s_min), type(_s_max), type(values))
 
         metrics = pd.DataFrame(
-            data={'maximum': states[self.__points].max(axis=0).values,
-                  'minimum': states[self.__points].min(axis=0).values,
-                  'latest': states[self.__points][-1:].squeeze().values,
-                  'median': states[self.__points].median(axis=0).values})
+            data={'maximum': _s_max * frame['metric'].max(axis=0),
+                  'minimum': _s_min * frame['metric'].min(axis=0),
+                  'latest': values[-1:], 'median': np.nanquantile(values, q=0.5)})
 
-        metrics = metrics.assign(points=self.__points)
-        metrics['ending'] = states['timestamp'].max()
+        metrics['ending'] = frame['timestamp'].max()
 
         return metrics
 
-    def exc(self, data: pd.DataFrame, partition: pr.Partitions) -> pd.DataFrame:
+    def __evaluate(self, i: int, j: float):
         """
 
-        :param data: Consisting of fields (a) timestamp, (b) measure
-        :param partition: Refer to src.elements.partitions.py
+        :param i:
+        :param j:
         :return:
         """
 
-        frame = data.copy()
-        frame.sort_values(by='timestamp', ascending=True, inplace=True)
+        # weights
+        weights = self.__weights(i=i)
 
-        # Weighted rates of river level change
-        gamma = pd.DataFrame(
-            data=self.__rates(frame=frame) * self.__weights(frame=frame), columns=self.__points)
-        gamma['timestamp'] = frame['timestamp'].values
+        # rates * weights, timestamps, sign
+        frame = pd.DataFrame(data={'metric': self.__rates(i=i, j=j) * weights, 'timestamp': self.__data['timestamp'].values,
+                                   'sign': np.where(weights < 0, -1, 1)})
+        logging.info(frame)
 
         # Empty
-        if gamma.shape[0] == 0:
+        if frame.shape[0] == 0:
             return pd.DataFrame()
 
         # Metrics
-        metrics = self.__get_metrics(gamma=gamma)
-        metrics['catchment_id'] = partition.catchment_id
-        metrics['ts_id'] = partition.ts_id
+        metrics = self.__get_metrics(frame=frame)
+        metrics = metrics.assign(points=i)
+        metrics['catchment_id'] = self.__partition.catchment_id
+        metrics['ts_id'] = self.__partition.ts_id
+        logging.info(metrics)
+
+        return metrics
+
+    def exc(self) -> pd.DataFrame:
+        """
+
+        :return:
+        """
+
+        computations = []
+        for i, j in zip(self.__points, self.__tau):
+            logging.info('%s, %s', i, j)
+            computations.append(self.__evaluate(i=i, j=j))
+        metrics = pd.concat(computations, axis=0)
+
+        logging.info(metrics)
 
         return metrics
