@@ -24,7 +24,9 @@ class Custom:
         minimum = 13.5
         maximum = 22.5
 
-        return minimum + (maximum - minimum)*value/(1 + np.abs(value))
+        est = minimum + (maximum - minimum)*np.abs(value)/(1 + np.abs(value))
+
+        return est
 
     @staticmethod
     def f_opacity(value: float) -> float:
@@ -37,4 +39,6 @@ class Custom:
         minimum = 0.25
         maximum = 0.95
 
-        return minimum + (maximum - minimum)*value/np.sqrt(1 + np.power(value, 2))
+        est = minimum + (maximum - minimum)*(value + 1)/np.sqrt(1 + np.power(value, 2))
+
+        return est
