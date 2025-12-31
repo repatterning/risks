@@ -66,7 +66,7 @@ class Interface:
 
         # Compute
         computations = []
-        for partition in partitions[:5]:
+        for partition in partitions[:36]:
             keys = self.__get_keys(ts_id=partition.ts_id)
             data = __data(keys=keys)
             metrics = self.__get_metrics(data=data, partition=partition)
@@ -80,9 +80,10 @@ class Interface:
         logging.info(instances)
 
         # Ranking
-        # src.algorithms.ranking.Ranking().exc(instances=instances)
+        instances = src.algorithms.ranking.Ranking().exc(instances=instances.copy())
+        logging.info(instances)
 
         # Persist
-        # src.algorithms.persist.Persist(instances=instances).exc()
+        src.algorithms.persist.Persist(instances=instances).exc()
 
         return instances
