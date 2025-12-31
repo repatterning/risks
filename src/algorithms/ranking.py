@@ -11,7 +11,8 @@ class Ranking:
     def __init__(self):
         pass
 
-    def __rankings(self, data: pd.DataFrame) -> pd.DataFrame:
+    @staticmethod
+    def __rankings(data: pd.DataFrame) -> pd.DataFrame:
         """
 
         :return:
