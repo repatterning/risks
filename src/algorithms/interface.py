@@ -1,12 +1,12 @@
 """Module interface.py"""
-import logging
+
 import dask
 import pandas as pd
 
 import src.algorithms.data
 import src.algorithms.persist
-import src.algorithms.valuations
 import src.algorithms.ranking
+import src.algorithms.valuations
 import src.elements.partitions as pr
 
 
@@ -77,11 +77,9 @@ class Interface:
         instances = pd.concat(calculations, ignore_index=True, axis=0)
         instances = instances.copy().merge(reference, how='left', on=['catchment_id', 'ts_id'])
         instances['hours'] = self.__arguments.get('frequency') * instances['points']
-        logging.info(instances)
 
         # Ranking
         instances = src.algorithms.ranking.Ranking().exc(instances=instances.copy())
-        logging.info(instances)
 
         # Persist
         src.algorithms.persist.Persist(instances=instances).exc()
