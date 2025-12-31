@@ -1,7 +1,6 @@
 """Module parcels.py"""
 import geopandas
 import numpy as np
-import pandas as pd
 
 import src.elements.parcel as pcl
 
@@ -33,33 +32,13 @@ class Parcels:
 
         return rng.uniform(low=0.05, high=0.80, size=size)
 
-    def __catchments(self) -> pd.DataFrame:
-        """
-
-        :return:
-        """
-
-        frame = self.__data[['catchment_id', 'catchment_name', 'latest']].groupby(
-            by=['catchment_id', 'catchment_name']).agg(maximum=('latest', 'max'))
-
-        # Convert 'catchment_id' & 'catchment_name' to fields; currently indices.
-        frame.reset_index(drop=False, inplace=True)
-
-        # Hence
-        frame['rank'] = frame['maximum'].rank(method='first', ascending=False).astype(int)
-        frame.drop(columns='maximum', inplace=True)
-        frame.sort_values(by='catchment_name', inplace=True)
-        frame.reset_index(drop=True, inplace=True)
-
-        return frame
-
     def exc(self) -> list[pcl.Parcel]:
         """
 
         :return:
         """
 
-        catchments = self.__catchments()
+        catchments = self.__data.copy()[['catchment_id', 'catchment_name', 'rank']].drop_duplicates()
         catchments['decimal'] = self.__get_decimals(size=catchments.shape[0])
 
         # An iterable for mapping by layer
