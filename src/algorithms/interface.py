@@ -5,6 +5,7 @@ import pandas as pd
 import src.algorithms.data
 import src.algorithms.persist
 import src.algorithms.valuations
+import src.algorithms.ranking
 import src.elements.partitions as pr
 
 
@@ -65,7 +66,10 @@ class Interface:
         instances = instances.copy().merge(reference, how='left', on=['catchment_id', 'ts_id'])
         instances['hours'] = self.__arguments.get('frequency') * instances['points']
 
+        # Ranking
+        # src.algorithms.ranking.Ranking().exc(instances=instances)
+
         # Persist
-        src.algorithms.persist.Persist(instances=instances).exc()
+        # src.algorithms.persist.Persist(instances=instances).exc()
 
         return instances
