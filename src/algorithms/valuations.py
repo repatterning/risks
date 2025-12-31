@@ -58,7 +58,7 @@ class Valuations:
         return weights # .to_numpy()
 
     @staticmethod
-    def __get_metrics(frame: pd.DataFrame) -> pd.DataFrame:
+    def __get_aggregates(frame: pd.DataFrame) -> pd.DataFrame:
         """
 
         :param frame:
@@ -70,14 +70,14 @@ class Valuations:
         values = frame['sign'].values * frame['metric'].values
         logging.info('%s, %s, %s', type(_s_min), type(_s_max), type(values))
 
-        metrics = pd.DataFrame(
+        aggregates = pd.DataFrame(
             data={'maximum': _s_max * frame['metric'].max(axis=0),
                   'minimum': _s_min * frame['metric'].min(axis=0),
                   'latest': values[-1:], 'median': np.nanquantile(values, q=0.5)})
 
-        metrics['ending'] = frame['timestamp'].max()
+        aggregates['ending'] = frame['timestamp'].max()
 
-        return metrics
+        return aggregates
 
     def __evaluate(self, i: int, j: float):
         """
@@ -99,12 +99,12 @@ class Valuations:
             return pd.DataFrame()
 
         # Metrics
-        metrics = self.__get_metrics(frame=frame)
-        metrics = metrics.assign(points=i)
-        metrics['catchment_id'] = self.__partition.catchment_id
-        metrics['ts_id'] = self.__partition.ts_id
+        aggregates = self.__get_aggregates(frame=frame)
+        aggregates = aggregates.assign(points=i)
+        aggregates['catchment_id'] = self.__partition.catchment_id
+        aggregates['ts_id'] = self.__partition.ts_id
 
-        return metrics
+        return aggregates
 
     def exc(self) -> pd.DataFrame:
         """
