@@ -1,8 +1,6 @@
 """Module valuations.py"""
-import logging
 import numpy as np
 import pandas as pd
-
 
 import src.elements.partitions as pr
 
@@ -68,7 +66,6 @@ class Valuations:
         _s_max = frame['sign'].values[frame['metric'].idxmax()]
         _s_min = frame['sign'].values[frame['metric'].idxmin()]
         values = frame['sign'].values * frame['metric'].values
-        logging.info('%s, %s, %s', type(_s_min), type(_s_max), type(values))
 
         aggregates = pd.DataFrame(
             data={'maximum': _s_max * frame['metric'].max(axis=0),
