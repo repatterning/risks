@@ -1,9 +1,13 @@
+"""Module ranking.py"""
 import logging
 
 import pandas as pd
 
 
 class Ranking:
+    """
+    Ranking by catchment
+    """
 
     def __init__(self):
         pass
@@ -26,7 +30,6 @@ class Ranking:
         frame.drop(columns='maximum', inplace=True)
         frame.sort_values(by='catchment_name', inplace=True)
         frame.reset_index(drop=True, inplace=True)
-        logging.info(frame)
 
         return frame
 
@@ -41,8 +44,12 @@ class Ranking:
         __points = instances['points'].unique()
         logging.info(__points)
 
+        computation = []
         for points in __points:
             data = instances.copy().loc[instances['points'] == points, :]
             rankings = self.__rankings(data=data)
-            frame = data.merge(rankings, how='left', on=['catchment_id'])
-            logging.info(frame)
+            hence = data.merge(rankings, how='left', on=['catchment_id'])
+            computation.append(hence)
+        frame = pd.concat(computation, axis=0, ignore_index=True)
+
+        return frame
