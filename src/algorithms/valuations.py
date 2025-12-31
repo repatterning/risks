@@ -28,34 +28,34 @@ class Valuations:
         self.__tau: np.ndarray = np.array(arguments.get('tau'), dtype=float)
         self.__points: np.ndarray = (self.__tau / arguments.get('frequency')).astype(int)
 
-    def __rates(self, i: int, j: float):
+    def __rates(self, i: int, j: float) -> np.ndarray:
         """
 
-        :param i:
-        :param j:
+        :param i: # of points per `time interval`<br>
+        :param j: time interval<br>
         :return:
         """
 
         # differences
-        differences: np.ndarray = self.__data.copy()['measure'].diff(int(i)).values # .to_frame(name=i)
+        differences: np.ndarray = self.__data.copy()['measure'].diff(int(i)).values
 
         # 1000 * (delta measure) / (delta time); wherein 1000 converts metres to millimetres
         rates: np.ndarray = 1000 * np.true_divide(differences, j)
 
         return rates
 
-    def __weights(self, i: int):
+    def __weights(self, i: int) -> np.ndarray:
         """
 
-        :param i:
+        :param i: # of points per `time interval`<br>
         :return:
             A numpy array of fractional river-level-percentage-change, with respect to different time spans
         """
 
         # (delta measure) / (original measure)
-        weights: np.ndarray = self.__data.copy()['measure'].pct_change(int(i)).values #.to_frame(name=i)
+        weights: np.ndarray = self.__data.copy()['measure'].pct_change(int(i)).values
 
-        return weights # .to_numpy()
+        return weights
 
     @staticmethod
     def __get_aggregates(frame: pd.DataFrame) -> pd.DataFrame:
