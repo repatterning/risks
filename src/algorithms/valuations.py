@@ -93,7 +93,6 @@ class Valuations:
         # rates * weights, timestamps, sign
         frame = pd.DataFrame(data={'metric': self.__rates(i=i, j=j) * weights, 'timestamp': self.__data['timestamp'].values,
                                    'sign': np.where(weights < 0, -1, 1)})
-        logging.info(frame)
 
         # Empty
         if frame.shape[0] == 0:
@@ -104,7 +103,6 @@ class Valuations:
         metrics = metrics.assign(points=i)
         metrics['catchment_id'] = self.__partition.catchment_id
         metrics['ts_id'] = self.__partition.ts_id
-        logging.info(metrics)
 
         return metrics
 
@@ -116,10 +114,7 @@ class Valuations:
 
         computations = []
         for i, j in zip(self.__points, self.__tau):
-            logging.info('%s, %s', i, j)
             computations.append(self.__evaluate(i=i, j=j))
         metrics = pd.concat(computations, axis=0)
-
-        logging.info(metrics)
 
         return metrics
