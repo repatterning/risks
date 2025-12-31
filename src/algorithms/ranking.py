@@ -20,7 +20,6 @@ class Ranking:
 
         frame = data.copy()[['catchment_id', 'catchment_name', 'latest']].groupby(
             by=['catchment_id', 'catchment_name']).agg(maximum=('latest', 'max'))
-        logging.info(frame)
 
         # Convert 'catchment_id' & 'catchment_name' to fields; currently indices.
         frame.reset_index(drop=False, inplace=True)
@@ -42,7 +41,6 @@ class Ranking:
 
 
         __points = instances['points'].unique()
-        logging.info(__points)
 
         computation = []
         for points in __points:
