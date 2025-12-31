@@ -46,7 +46,7 @@ class Ranking:
         for points in __points:
             data = instances.copy().loc[instances['points'] == points, :]
             rankings = self.__rankings(data=data)
-            hence = data.merge(rankings, how='left', on=['catchment_id'])
+            hence = data.merge(rankings.drop(columns=['catchment_name']), how='left', on=['catchment_id'])
             computation.append(hence)
         frame = pd.concat(computation, axis=0, ignore_index=True)
 
