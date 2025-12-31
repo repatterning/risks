@@ -82,8 +82,8 @@ class Valuations:
     def __metrics(self, i: int, j: float):
         """
 
-        :param i:
-        :param j:
+        :param i: # of points per `time interval`<br>
+        :param j: time interval<br>
         :return:
         """
 
