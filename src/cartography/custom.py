@@ -43,7 +43,7 @@ class Custom:
         :return:
         """
 
-        minimum = 0.25
+        minimum = 0.35
         maximum = 0.95
 
         factor = (value - lower)/np.sqrt(1 + np.power(upper - lower, 2))
