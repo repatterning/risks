@@ -19,6 +19,10 @@ class Disaggregates:
         self.__catchments = self.__get_catchments()
 
     def __get_catchments(self) -> dict:
+        """
+
+        :return:
+        """
 
         data = self.__frame[['catchment_id', 'catchment_name']].drop_duplicates()
         values = data.set_index(keys='catchment_id')
@@ -54,7 +58,6 @@ class Disaggregates:
 
         # Therefore ...
         codes = baseline['catchment_id'].to_numpy()
-
         computation = [self.__get_disaggregate(catchment_id=code) for code in codes]
 
         return computation
