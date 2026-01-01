@@ -54,10 +54,20 @@ class Custom:
 
     @staticmethod
     def f_stroke(value: float) -> bool:
+        """
+
+        :param value:
+        :return:
+        """
 
         return value < 0
 
     @staticmethod
     def f_fill(value: float) -> bool:
+        """
+        
+        :param value:
+        :return:
+        """
 
         return value >= 0
