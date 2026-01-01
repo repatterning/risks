@@ -7,15 +7,8 @@ class Custom:
     Drawing functions
     """
 
-    def __init__(self, lower: float, upper: float):
-        """
-
-        :param lower:
-        :param upper:
-        """
-
-        self.__lower = lower
-        self.__upper = upper
+    def __init__(self):
+        pass
 
     @staticmethod
     def f_radius(value: float) -> float:
@@ -24,8 +17,6 @@ class Custom:
         tanh: minimum + (maximum - minimum)*np.tanh(value)
 
         :param value:
-        :param lower:
-        :param upper:
         :return:
         """
 
@@ -37,18 +28,21 @@ class Custom:
 
         return est
 
-    def f_opacity(self, value: float) -> float:
+    @staticmethod
+    def f_opacity(value: float, lower: float, upper: float) -> float:
         """
         factor = (value + 1)/np.sqrt(1 + np.power(value, 2))
 
         :param value:
+        :param lower:
+        :param upper:
         :return:
         """
 
         minimum = 0.35
         maximum = 0.95
 
-        factor = (value - self.__lower)/np.sqrt(1 + np.power(self.__upper - self.__lower, 2))
+        factor = (value - lower)/np.sqrt(1 + np.power(upper - lower, 2))
         est = minimum + factor*(maximum - minimum)
 
         return est
