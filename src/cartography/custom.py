@@ -48,11 +48,16 @@ class Custom:
         minimum = 0.25
         maximum = 0.95
 
-        est = minimum + (maximum - minimum)*(value - lower)/(1 + upper - lower)
+        est = minimum + (maximum - minimum)*(value - lower)/np.sqrt(1 + np.power(upper - lower, 2))
 
         return est
 
     @staticmethod
-    def f_rule(value: float) -> str:
+    def f_stroke(value: float) -> bool:
 
-        return 'odd' if value < 0 else 'even'
+        return value < 0
+
+    @staticmethod
+    def f_fill(value: float) -> bool:
+
+        return value >= 0
