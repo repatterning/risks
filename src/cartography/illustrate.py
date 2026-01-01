@@ -83,7 +83,7 @@ class Illustrate:
                 data = instances.to_crs(epsg=3857),
                 name=f'{parcel.catchment_name}',
                 marker=folium.CircleMarker(
-                    radius=22.5, weight=2, color=colours(parcel.decimal), fillColor=colours(parcel.decimal), fill_opacity=0.65),
+                    radius=22.5, weight=3, color=colours(parcel.decimal), fillColor=colours(parcel.decimal), fill_opacity=0.65),
                 tooltip=folium.GeoJsonTooltip(
                     fields=['latest', 'maximum', 'median', 'station_name', 'river_name', 'catchment_name'],
                     aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station', 'River/Water', 'Catchment']),
