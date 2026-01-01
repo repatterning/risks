@@ -30,7 +30,7 @@ class Parcels:
 
         rng = np.random.default_rng(seed=self.__seed)
 
-        return rng.uniform(low=0.05, high=0.80, size=size)
+        return rng.uniform(low=0.25, high=0.90, size=size)
 
     def exc(self) -> list[pcl.Parcel]:
         """
