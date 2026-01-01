@@ -15,6 +15,7 @@ class Ranking:
     def __rankings(data: pd.DataFrame) -> pd.DataFrame:
         """
 
+        :param data:
         :return:
         """
 
