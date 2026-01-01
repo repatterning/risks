@@ -53,7 +53,6 @@ class Interface:
         """
 
         values = self.__instances.copy().loc[self.__instances['points'] == points, :]
-
         data = geopandas.GeoDataFrame(
             values,
             geometry=geopandas.points_from_xy(values['longitude'], values['latitude'])
