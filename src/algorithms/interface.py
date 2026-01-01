@@ -1,9 +1,11 @@
 """Module interface.py"""
+
 import dask
 import pandas as pd
 
 import src.algorithms.data
 import src.algorithms.persist
+import src.algorithms.ranking
 import src.algorithms.valuations
 import src.elements.partitions as pr
 
@@ -35,6 +37,18 @@ class Interface:
 
         return keys.to_list()
 
+    @dask.delayed
+    def __get_metrics(self, data: pd.DataFrame, partition: pr.Partitions):
+        """
+
+        :param data:
+        :param partition:
+        :return:
+        """
+
+        return src.algorithms.valuations.Valuations(
+            data=data, partition=partition, arguments=self.__arguments).exc()
+
     def exc(self, partitions: list[pr.Partitions], reference: pd.DataFrame) -> pd.DataFrame:
         """
         streams = src.functions.streams.Streams()
@@ -49,14 +63,13 @@ class Interface:
 
         # Delayed tasks
         __data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
-        __valuations = dask.delayed(src.algorithms.valuations.Valuations(arguments=self.__arguments).exc)
 
         # Compute
         computations = []
         for partition in partitions:
             keys = self.__get_keys(ts_id=partition.ts_id)
             data = __data(keys=keys)
-            metrics = __valuations(data=data, partition=partition)
+            metrics = self.__get_metrics(data=data, partition=partition)
             computations.append(metrics)
         calculations = dask.compute(computations, scheduler='threads')[0]
 
@@ -64,6 +77,9 @@ class Interface:
         instances = pd.concat(calculations, ignore_index=True, axis=0)
         instances = instances.copy().merge(reference, how='left', on=['catchment_id', 'ts_id'])
         instances['hours'] = self.__arguments.get('frequency') * instances['points']
+
+        # Ranking
+        instances = src.algorithms.ranking.Ranking().exc(instances=instances.copy())
 
         # Persist
         src.algorithms.persist.Persist(instances=instances).exc()

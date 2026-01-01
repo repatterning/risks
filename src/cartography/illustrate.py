@@ -81,13 +81,21 @@ class Illustrate:
                 data = instances.to_crs(epsg=3857),
                 name=f'{parcel.catchment_name}',
                 marker=folium.CircleMarker(
-                    radius=22.5, stroke=False, fill=True, fillColor=colours(parcel.decimal), fill_opacity=0.65),
+                    radius=22.5, weight=4, color=colours(parcel.decimal),
+                    fillColor=colours(parcel.decimal), fill_opacity=0.65),
                 tooltip=folium.GeoJsonTooltip(
                     fields=['latest', 'maximum', 'median', 'station_name', 'river_name', 'catchment_name'],
                     aliases=['latest (mm/hr)', 'maximum (mm/hr)', 'median (mm/hr)', 'Station', 'River/Water', 'Catchment']),
                 style_function=lambda feature: {
-                    "fillOpacity": custom.f_opacity(feature['properties']['latest']),
-                    "radius": custom.f_radius(feature['properties']['latest'])
+                    "fillOpacity": custom.f_opacity(feature['properties']['latest'],
+                                                    lower=feature['properties']['lower'],
+                                                    upper=feature['properties']['upper']),
+                    "opacity": custom.f_opacity(feature['properties']['latest'],
+                                                lower=feature['properties']['lower'],
+                                                upper=feature['properties']['upper']),
+                    "radius": custom.f_radius(feature['properties']['latest']),
+                    "stroke": custom.f_stroke(feature['properties']['latest']),
+                    "fill": custom.f_fill(feature['properties']['latest'])
                 },
                 zoom_on_click=True,
                 show=show
