@@ -13,6 +13,7 @@ class Custom:
     @staticmethod
     def f_radius(value: float, lower: float, upper: float) -> float:
         """
+        factor = value/(1 + np.abs(value))
 
         arctan: minimum + (maximum - minimum)*2*np.arctan(0.5*value*np.pi)/np.pi
         tanh: minimum + (maximum - minimum)*np.tanh(value)
@@ -26,9 +27,6 @@ class Custom:
         minimum = 3.5
         maximum = 33.5
 
-        # factor = value/(1 + np.abs(value))
-        # est = minimum + factor*(maximum - minimum)
-
         factor = (value - lower)/(1 + upper - lower)
         est = minimum + factor*(maximum - minimum)
 
@@ -37,7 +35,7 @@ class Custom:
     @staticmethod
     def f_opacity(value: float, lower: float, upper: float) -> float:
         """
-        (value + 1)/np.sqrt(1 + np.power(value, 2))
+        factor = (value + 1)/np.sqrt(1 + np.power(value, 2))
 
         :param value:
         :param lower:
@@ -48,7 +46,8 @@ class Custom:
         minimum = 0.25
         maximum = 0.95
 
-        est = minimum + (maximum - minimum)*(value - lower)/np.sqrt(1 + np.power(upper - lower, 2))
+        factor = (value - lower)/np.sqrt(1 + np.power(upper - lower, 2))
+        est = minimum + factor*(maximum - minimum)
 
         return est
 
@@ -65,7 +64,7 @@ class Custom:
     @staticmethod
     def f_fill(value: float) -> bool:
         """
-        
+
         :param value:
         :return:
         """
