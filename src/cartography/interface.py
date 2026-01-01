@@ -75,5 +75,6 @@ class Interface:
 
         for points in self.__instances['points'].unique():
             data = self.__get_data(points=points)
-            src.cartography.illustrate.Illustrate(data=data, coarse=coarse).exc(
-                points=points, n_catchments_visible=n_catchments_visible)
+
+            # src.cartography.illustrate.Illustrate(data=data, coarse=coarse).exc(
+            #     points=points, n_catchments_visible=n_catchments_visible)
