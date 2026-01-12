@@ -39,6 +39,7 @@ class Parcels:
         """
 
         catchments = self.__data.copy()[['catchment_id', 'catchment_name', 'rank']].drop_duplicates()
+        catchments.sort_values(by='catchment_name', inplace=True)
         catchments['decimal'] = self.__get_decimals(size=catchments.shape[0])
 
         # An iterable for mapping by layer
