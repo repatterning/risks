@@ -32,7 +32,7 @@ class Disaggregates:
     def __get_disaggregate(self, catchment_id: int):
         """
 
-        :param catchment_id: The identification doe of a catchment area.
+        :param catchment_id: The identification code of a catchment area.
         :return:
         """
 
